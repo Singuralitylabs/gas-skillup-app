@@ -8,33 +8,48 @@
 - **React 19.2.1** - App Router アーキテクチャを使用
 - **TypeScript 5** - strict モード有効
 - **Tailwind CSS 4** - PostCSS 設定
-- **ESLint 9** - Next.js 設定
+- **Biome 2.3.9** - リンター・フォーマッター
+- **bun 1.2.21** - JavaScript ランタイム・パッケージマネージャー
 
 ## 開発コマンド
 
+⚠️ **重要**: このプロジェクトは `bun` を使用しています。`npm` ではなく `bun` コマンドを使用してください。
+
+### パッケージのインストール
+```bash
+bun install
+```
+
 ### 開発サーバーの起動
 ```bash
-npm run dev
+bun run dev
 ```
 http://localhost:3000 で起動します。ホットモジュールリプレースメント有効。
 
 ### 本番ビルド
 ```bash
-npm run build
+bun run build
 ```
 最適化された本番ビルドを `.next/` ディレクトリに作成します。
 
 ### 本番サーバーの起動
 ```bash
-npm run start
+bun run start
 ```
-本番ビルドを実行します（事前に `npm run build` が必要）。
+本番ビルドを実行します（事前に `bun run build` が必要）。
 
 ### リンティング
 ```bash
-npm run lint
+bun run lint          # コードチェック
+bun run lint:fix      # 自動修正可能な問題を修正
 ```
-Next.js と TypeScript の設定で ESLint を実行します。
+
+### フォーマット
+```bash
+bun run format        # コードフォーマット
+```
+
+Biome を使用してコードの品質とスタイルを管理します。
 
 ## アーキテクチャ
 
@@ -61,9 +76,12 @@ Next.js と TypeScript の設定で ESLint を実行します。
 - カスタムカラー変数: `--color-background`, `--color-foreground`
 - フォント変数: `--font-geist-sans`, `--font-geist-mono`
 
-**ESLint**:
-- `eslint-config-next/core-web-vitals` と `eslint-config-next/typescript` を使用
+**Biome**:
+- リンターとフォーマッターを統合
+- Next.js と React のルールを移行済み
+- `biome.json` で設定管理
 - 無視対象: `.next/`, `out/`, `build/`, `next-env.d.ts`
+- インポートの自動整理機能有効
 
 ### スタイリングパターン
 - Tailwind のユーティリティクラスが主なスタイリング方法
@@ -591,3 +609,5 @@ export async function GET(
 - テストフレームワークはまだ設定されていません
 - デフォルト以外の API ルートやサーバーコンポーネントは追加されていません
 - Next.js 16 の新機能と React 19 を使用
+- **パッケージ管理**: `bun` を使用（`npm` や `yarn` は使用しない）
+- **ロックファイル**: `bun.lock` を使用（`package-lock.json` は不要で .gitignore に含まれる）
