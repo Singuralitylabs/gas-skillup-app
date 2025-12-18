@@ -66,7 +66,7 @@ export default function StudentDashboardPage() {
 								<span className="text-sm font-medium">Phase 3: 実践編</span>
 								<Badge variant="secondary">未開始</Badge>
 							</div>
-							<Progress value={0} variant="secondary" showLabel />
+							<Progress value={0} showLabel />
 						</div>
 					</CardContent>
 				</Card>
