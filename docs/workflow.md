@@ -77,7 +77,7 @@ W10 ✓ 本番リリース
 **フロントエンド基盤** (2日)
 - [x] プロジェクト構成設計（app router構造）
 - [x] 共通UIコンポーネント実装（Button, Input, Card, Badge等）
-- [ ] レイアウトコンポーネント実装（Header, Footer, Navigation, Sidebar）
+- [x] レイアウトコンポーネント実装（Header, Footer, Navigation, Sidebar）
 - [ ] Tailwind CSS カスタム設定（カラーパレット、フォント）
 - [ ] TypeScript型定義（DBスキーマベース）
 
