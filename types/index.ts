@@ -33,8 +33,7 @@ export type Content = Database["public"]["Tables"]["contents"]["Row"];
 export type ContentInsert = Database["public"]["Tables"]["contents"]["Insert"];
 export type ContentUpdate = Database["public"]["Tables"]["contents"]["Update"];
 
-export type UserProgress =
-	Database["public"]["Tables"]["user_progress"]["Row"];
+export type UserProgress = Database["public"]["Tables"]["user_progress"]["Row"];
 export type UserProgressInsert =
 	Database["public"]["Tables"]["user_progress"]["Insert"];
 export type UserProgressUpdate =
