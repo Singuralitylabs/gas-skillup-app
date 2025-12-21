@@ -1,15 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import {
-	Button,
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui";
+import { Breadcrumbs, SubmissionForm } from "@/components/ui";
 import { createSubmission, getCurrentUser, mockContents } from "@/lib/mock";
 import type { ContentResponse, SubmissionType, UserResponse } from "@/types";
 
@@ -20,8 +13,6 @@ function NewSubmissionForm() {
 
 	const [user, setUser] = useState<UserResponse | null>(null);
 	const [content, setContent] = useState<ContentResponse | null>(null);
-	const [submissionType, setSubmissionType] = useState<SubmissionType>("code");
-	const [submissionContent, setSubmissionContent] = useState("");
 	const [error, setError] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,26 +52,11 @@ function NewSubmissionForm() {
 		setContent(foundContent);
 	}, [contentId, router]);
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-
+	const handleSubmit = async (
+		submissionType: SubmissionType,
+		submissionContent: string,
+	) => {
 		if (!user || !content) return;
-
-		// バリデーション
-		if (!submissionContent.trim()) {
-			setError("提出内容を入力してください");
-			return;
-		}
-
-		if (submissionType === "url") {
-			// URLの簡易バリデーション
-			try {
-				new URL(submissionContent);
-			} catch {
-				setError("有効なURLを入力してください");
-				return;
-			}
-		}
 
 		setError("");
 		setIsSubmitting(true);
@@ -108,23 +84,13 @@ function NewSubmissionForm() {
 		<div className="container py-8">
 			<div className="max-w-3xl mx-auto space-y-6">
 				{/* パンくずリスト */}
-				<nav className="flex items-center gap-2 text-sm text-muted-foreground">
-					<Link
-						href="/contents"
-						className="hover:text-foreground transition-colors"
-					>
-						コンテンツ一覧
-					</Link>
-					<span>/</span>
-					<Link
-						href={`/contents/${content.id}`}
-						className="hover:text-foreground transition-colors"
-					>
-						{content.title}
-					</Link>
-					<span>/</span>
-					<span className="text-foreground">課題提出</span>
-				</nav>
+				<Breadcrumbs
+					items={[
+						{ label: "コンテンツ一覧", href: "/contents" },
+						{ label: content.title, href: `/contents/${content.id}` },
+						{ label: "課題提出" },
+					]}
+				/>
 
 				{/* ヘッダー */}
 				<div className="space-y-2">
@@ -133,110 +99,13 @@ function NewSubmissionForm() {
 				</div>
 
 				{/* 提出フォーム */}
-				<Card>
-					<CardHeader>
-						<CardTitle>提出内容</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handleSubmit} className="space-y-6">
-							{/* 提出タイプ選択 */}
-							<div className="space-y-3">
-								<label className="text-sm font-medium">提出タイプ</label>
-								<div className="flex gap-6">
-									<label className="flex items-center gap-2 cursor-pointer">
-										<input
-											type="radio"
-											name="submissionType"
-											value="code"
-											checked={submissionType === "code"}
-											onChange={(e) =>
-												setSubmissionType(e.target.value as SubmissionType)
-											}
-											className="w-4 h-4"
-										/>
-										<span>コード</span>
-									</label>
-									<label className="flex items-center gap-2 cursor-pointer">
-										<input
-											type="radio"
-											name="submissionType"
-											value="url"
-											checked={submissionType === "url"}
-											onChange={(e) =>
-												setSubmissionType(e.target.value as SubmissionType)
-											}
-											className="w-4 h-4"
-										/>
-										<span>URL</span>
-									</label>
-								</div>
-							</div>
-
-							{/* 提出内容入力 */}
-							<div className="space-y-3">
-								<label htmlFor="content" className="text-sm font-medium block">
-									{submissionType === "code"
-										? "コードを入力してください"
-										: "URLを入力してください"}
-								</label>
-								{submissionType === "code" ? (
-									<textarea
-										id="content"
-										value={submissionContent}
-										onChange={(e) => setSubmissionContent(e.target.value)}
-										placeholder="ここにコードを入力してください"
-										rows={12}
-										className="w-full px-4 py-3 border rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-										required
-									/>
-								) : (
-									<input
-										type="url"
-										id="content"
-										value={submissionContent}
-										onChange={(e) => setSubmissionContent(e.target.value)}
-										placeholder="https://example.com/your-work"
-										className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-										required
-									/>
-								)}
-								<p className="text-xs text-muted-foreground">
-									{submissionType === "code"
-										? "作成したコードを貼り付けてください。提出後は編集できません。"
-										: "デプロイしたアプリケーションやGitHubリポジトリのURLを入力してください。"}
-								</p>
-							</div>
-
-							{/* エラーメッセージ */}
-							{error && (
-								<div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4">
-									<p className="text-sm text-red-600 dark:text-red-400">
-										{error}
-									</p>
-								</div>
-							)}
-
-							{/* アクションボタン */}
-							<div className="flex items-center gap-4">
-								<Button
-									type="submit"
-									disabled={isSubmitting}
-									className="min-w-[120px]"
-								>
-									{isSubmitting ? "提出中..." : "提出する"}
-								</Button>
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() => router.back()}
-									disabled={isSubmitting}
-								>
-									キャンセル
-								</Button>
-							</div>
-						</form>
-					</CardContent>
-				</Card>
+				<SubmissionForm
+					onSubmit={handleSubmit}
+					isSubmitting={isSubmitting}
+					onCancel={() => router.back()}
+					contentTitle={content.title}
+					error={error}
+				/>
 
 				{/* 注意事項 */}
 				<div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">

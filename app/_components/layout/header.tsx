@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { MobileMenu } from "./mobile-menu";
 
 export interface HeaderProps {
 	userRole?: "student" | "instructor" | "admin";
@@ -26,7 +27,7 @@ export function Header({ userRole = "student", userName }: HeaderProps) {
 			: studentNavItems;
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+		<header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
 			<div className="container flex h-16 items-center justify-between">
 				{/* Logo */}
 				<Link href="/" className="flex items-center space-x-2">
@@ -56,13 +57,26 @@ export function Header({ userRole = "student", userName }: HeaderProps) {
 							<span className="hidden text-sm text-muted-foreground sm:inline-block">
 								{userName}
 							</span>
-							<Button variant="ghost" size="sm">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="hidden md:inline-flex"
+							>
 								ログアウト
 							</Button>
 						</>
 					) : (
-						<Button size="sm">ログイン</Button>
+						<Button size="sm" className="hidden md:inline-flex">
+							ログイン
+						</Button>
 					)}
+
+					{/* Mobile Menu */}
+					<MobileMenu
+						userRole={userRole}
+						userName={userName}
+						navItems={navItems}
+					/>
 				</div>
 			</div>
 		</header>
