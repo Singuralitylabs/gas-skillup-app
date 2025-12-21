@@ -1,5 +1,5 @@
 /**
- * カスタム型定義
+ * カスタム型定義（MVP版）
  * アプリケーション全体で使用する型定義をここに配置
  */
 
@@ -14,7 +14,7 @@ export type ContentType = "video" | "text" | "exercise";
 export type SubmissionType = "code" | "url";
 
 // ============================================
-// Database Table Types (Supabaseから取得)
+// Database Table Types (snake_case - Supabaseから取得)
 // ============================================
 
 export type User = Database["public"]["Tables"]["users"]["Row"];
@@ -52,116 +52,327 @@ export type AnnouncementUpdate =
 	Database["public"]["Tables"]["announcements"]["Update"];
 
 // ============================================
-// Extended Types (リレーション含む)
+// API Response Types (camelCase - フロントエンド用)
+// ============================================
+
+/**
+ * APIレスポンス用ユーザー型
+ * Database型のsnake_caseをcamelCaseに変換
+ */
+export type UserResponse = {
+	id: string;
+	email: string;
+	name: string;
+	role: UserRole;
+	approved: boolean;
+	createdAt: string;
+};
+
+/**
+ * APIレスポンス用Phase型
+ */
+export type PhaseResponse = {
+	id: string;
+	title: string;
+	description: string | null;
+	orderIndex: number;
+	createdAt: string;
+};
+
+/**
+ * APIレスポンス用Week型
+ */
+export type WeekResponse = {
+	id: string;
+	phaseId: string;
+	title: string;
+	description: string | null;
+	orderIndex: number;
+	createdAt: string;
+};
+
+/**
+ * APIレスポンス用Content型
+ */
+export type ContentResponse = {
+	id: string;
+	weekId: string;
+	type: ContentType;
+	title: string;
+	content: string;
+	orderIndex: number;
+	createdAt: string;
+};
+
+/**
+ * APIレスポンス用UserProgress型
+ */
+export type UserProgressResponse = {
+	id: string;
+	userId: string;
+	contentId: string;
+	completed: boolean;
+	completedAt: string | null;
+};
+
+/**
+ * APIレスポンス用Submission型
+ */
+export type SubmissionResponse = {
+	id: string;
+	userId: string;
+	contentId: string;
+	submissionType: SubmissionType;
+	content: string;
+	feedback: string | null;
+	feedbackAt: string | null;
+	createdAt: string;
+};
+
+/**
+ * APIレスポンス用Announcement型
+ */
+export type AnnouncementResponse = {
+	id: string;
+	title: string;
+	content: string;
+	publishedAt: string;
+	createdAt: string;
+};
+
+// ============================================
+// Extended Types (リレーション含む - MVP最小限)
 // ============================================
 
 /**
  * Week with Phase
- * Week情報にPhase情報を含める
  */
-export type WeekWithPhase = Week & {
-	phase: Phase;
+export type WeekWithPhase = WeekResponse & {
+	phase: PhaseResponse;
 };
 
 /**
  * Content with Week and Phase
- * Content情報にWeekとPhase情報を含める
  */
-export type ContentWithRelations = Content & {
-	week: Week & {
-		phase: Phase;
-	};
+export type ContentWithRelations = ContentResponse & {
+	week: WeekWithPhase;
 };
 
 /**
- * User Progress with Content
- * 進捗情報にContent情報を含める
+ * Submission with User
  */
-export type UserProgressWithContent = UserProgress & {
-	content: ContentWithRelations;
-};
-
-/**
- * Submission with User and Content
- * 提出情報にUserとContent情報を含める
- */
-export type SubmissionWithRelations = Submission & {
-	user: User;
-	content: Content;
+export type SubmissionWithUser = SubmissionResponse & {
+	user: UserResponse;
 };
 
 // ============================================
-// View Models (UI表示用)
+// View Models (UI表示用 - MVP最小限)
 // ============================================
 
 /**
  * 進捗サマリー
  */
 export type ProgressSummary = {
-	total_contents: number;
-	completed_contents: number;
-	completion_rate: number; // 0-100
-	phases: {
-		phase_id: string;
-		phase_title: string;
-		total: number;
-		completed: number;
-	}[];
+	totalContents: number;
+	completedContents: number;
+	completionRate: number; // 0-100
 };
 
 /**
- * ダッシュボード統計
+ * ダッシュボード統計（講師用）
  */
 export type DashboardStats = {
-	total_students: number;
-	approved_students: number;
-	pending_approvals: number;
-	total_submissions: number;
-	unreviewed_submissions: number;
-	average_completion_rate: number;
+	totalStudents: number;
+	approvedStudents: number;
+	pendingApprovals: number;
+	totalSubmissions: number;
+	unreviewedSubmissions: number;
 };
 
 // ============================================
-// API Request/Response Types
+// Common API Types
 // ============================================
 
-export type CreateSubmissionRequest = {
-	content_id: string;
-	submission_type: SubmissionType;
-	content: string;
+/**
+ * セッション情報
+ */
+export type Session = {
+	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
 };
 
-export type CreateSubmissionResponse = {
-	success: boolean;
-	submission: Submission;
+/**
+ * ページネーション情報
+ */
+export type Pagination = {
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
 };
 
+/**
+ * 共通エラーレスポンス
+ */
+export type ErrorResponse = {
+	error: {
+		code: string;
+		message: string;
+		details?: Record<string, unknown>;
+	};
+};
+
+// ============================================
+// 認証 (Authentication) API Types
+// ============================================
+
+/**
+ * Google ログインリクエスト
+ */
+export type GoogleLoginRequest = {
+	idToken: string;
+};
+
+/**
+ * Google ログインレスポンス
+ */
+export type GoogleLoginResponse = {
+	user: UserResponse;
+	session: Session;
+};
+
+/**
+ * 新規登録リクエスト
+ */
+export type RegisterRequest = {
+	idToken: string;
+	name: string;
+};
+
+/**
+ * 新規登録レスポンス
+ */
+export type RegisterResponse = {
+	user: UserResponse;
+	message: string;
+};
+
+/**
+ * セッション更新リクエスト
+ */
+export type RefreshTokenRequest = {
+	refreshToken: string;
+};
+
+/**
+ * セッション更新レスポンス
+ */
+export type RefreshTokenResponse = {
+	accessToken: string;
+	expiresIn: number;
+};
+
+// ============================================
+// ユーザー管理 (Users) API Types
+// ============================================
+
+/**
+ * ユーザー情報更新リクエスト
+ */
+export type UpdateUserRequest = {
+	name: string;
+};
+
+/**
+ * 受講生一覧取得パラメータ
+ */
+export type GetStudentsParams = {
+	page?: number;
+	limit?: number;
+	search?: string;
+	isApproved?: boolean;
+	sortBy?: "name" | "email" | "createdAt";
+	order?: "asc" | "desc";
+};
+
+/**
+ * 受講生一覧レスポンス
+ */
+export type GetStudentsResponse = {
+	students: UserResponse[];
+	pagination: Pagination;
+};
+
+/**
+ * 未承認受講生一覧パラメータ
+ */
+export type GetPendingStudentsParams = {
+	page?: number;
+	limit?: number;
+};
+
+/**
+ * 未承認受講生一覧レスポンス
+ */
+export type GetPendingStudentsResponse = {
+	students: UserResponse[];
+	pagination: Pagination;
+};
+
+// ============================================
+// 進捗管理 (Progress) API Types
+// ============================================
+
+/**
+ * 進捗更新リクエスト
+ */
 export type UpdateProgressRequest = {
-	content_id: string;
+	contentId: string;
 	completed: boolean;
 };
 
+/**
+ * 進捗更新レスポンス
+ */
 export type UpdateProgressResponse = {
 	success: boolean;
-	progress: UserProgress;
+	progress: UserProgressResponse;
 };
 
-export type ApproveUserRequest = {
-	user_id: string;
-	approved: boolean;
+// ============================================
+// 課題提出 (Submissions) API Types
+// ============================================
+
+/**
+ * 課題提出リクエスト
+ */
+export type CreateSubmissionRequest = {
+	contentId: string;
+	submissionType: SubmissionType;
+	content: string;
 };
 
-export type ApproveUserResponse = {
+/**
+ * 課題提出レスポンス
+ */
+export type CreateSubmissionResponse = {
 	success: boolean;
-	user: User;
+	submission: SubmissionResponse;
 };
 
+/**
+ * フィードバック作成リクエスト
+ */
 export type CreateFeedbackRequest = {
-	submission_id: string;
+	submissionId: string;
 	feedback: string;
 };
 
+/**
+ * フィードバック作成レスポンス
+ */
 export type CreateFeedbackResponse = {
 	success: boolean;
-	submission: Submission;
+	submission: SubmissionResponse;
 };
