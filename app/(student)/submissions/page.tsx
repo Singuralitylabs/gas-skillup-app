@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SubmissionCard } from "@/components/student";
 import { Button } from "@/components/ui";
 import {
 	getCurrentUser,
@@ -15,6 +14,7 @@ import type {
 	SubmissionResponse,
 	UserResponse,
 } from "@/types";
+import { SubmissionCard } from "../_components";
 
 export default function SubmissionsPage() {
 	const router = useRouter();

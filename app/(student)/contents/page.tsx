@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PhaseSection } from "@/components/student";
 import { Button } from "@/components/ui";
 import {
 	getCurrentUser,
@@ -12,6 +11,7 @@ import {
 	mockPhases,
 } from "@/lib/mock";
 import type { UserResponse } from "@/types";
+import { PhaseSection } from "../_components";
 
 export default function ContentsPage() {
 	const router = useRouter();

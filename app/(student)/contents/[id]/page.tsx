@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MarkdownViewer, YouTubePlayer } from "@/components/student";
 import { Badge, Button, Card, CardContent } from "@/components/ui";
 import {
 	getCurrentUser,
@@ -14,6 +13,7 @@ import {
 	updateProgress,
 } from "@/lib/mock";
 import type { ContentResponse, UserResponse } from "@/types";
+import { MarkdownViewer, YouTubePlayer } from "../../_components";
 
 export default function ContentDetailPage() {
 	const params = useParams();

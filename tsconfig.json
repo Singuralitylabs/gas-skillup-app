@@ -19,7 +19,18 @@
 			}
 		],
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./*"],
+			"@/components/*": ["./app/_components/*"],
+			"@/ui/*": ["./app/_components/ui/*"],
+			"@/layout/*": ["./app/_components/layout/*"],
+			"@/student/*": ["./app/(student)/_components/*"],
+			"@/instructor/*": ["./app/(instructor)/_components/*"],
+			"@/lib/*": ["./app/_lib/*"],
+			"@/types/*": ["./app/_types/*"],
+			"@/types": ["./app/_types"],
+			"@/hooks/*": ["./app/_lib/hooks/*"],
+			"@/utils/*": ["./app/_lib/utils/*"],
+			"@/utils": ["./app/_lib/utils"]
 		}
 	},
 	"include": [

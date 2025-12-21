@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AnnouncementCard, ProgressCard } from "@/components/student";
 import {
 	Badge,
 	Button,
@@ -25,6 +24,7 @@ import {
 	mockWeeks,
 } from "@/lib/mock";
 import type { AnnouncementResponse, UserResponse } from "@/types";
+import { AnnouncementCard, ProgressCard } from "../_components";
 
 export default function StudentDashboardPage() {
 	const router = useRouter();
