@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui";
+import { Button, EmptySubmissions } from "@/components/ui";
 import {
 	getCurrentUser,
 	getStoredUserSubmissions,
@@ -115,31 +115,7 @@ export default function SubmissionsPage() {
 
 				{/* 提出履歴リスト */}
 				{submissions.length === 0 ? (
-					<div className="text-center py-16">
-						<svg
-							className="w-16 h-16 mx-auto text-gray-400 mb-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<title>No submissions</title>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-							/>
-						</svg>
-						<h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-							まだ課題を提出していません
-						</h2>
-						<p className="text-gray-600 dark:text-gray-400 mb-6">
-							演習コンテンツで課題を提出しましょう
-						</p>
-						<Link href="/contents">
-							<Button>コンテンツ一覧へ</Button>
-						</Link>
-					</div>
+					<EmptySubmissions onSubmitClick={() => router.push("/contents")} />
 				) : (
 					<div className="space-y-4">
 						{submissions.map((submission) => {

@@ -11,6 +11,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	EmptyAnnouncements,
 	Progress,
 } from "@/components/ui";
 import {
@@ -242,11 +243,7 @@ export default function StudentDashboardPage() {
 					</div>
 					<div className="space-y-4">
 						{announcements.length === 0 ? (
-							<Card>
-								<CardContent className="py-8 text-center text-muted-foreground">
-									お知らせはありません
-								</CardContent>
-							</Card>
+							<EmptyAnnouncements />
 						) : (
 							announcements.map((announcement) => (
 								<AnnouncementCard
