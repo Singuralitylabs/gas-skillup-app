@@ -69,7 +69,7 @@ export function PhaseSection({
 						/>
 					</svg>
 
-					<div className="md:flex w-full justify-between">
+					<div className="flex flex-col md:flex-row w-full md:justify-between gap-2">
 						<div className="flex-1 min-w-0">
 							<div className="flex items-center gap-3 mb-2">
 								<h2 className="text-xl font-bold text-left text-gray-700">
@@ -98,11 +98,11 @@ export function PhaseSection({
 							)}
 						</div>
 
-						<div className="flex flex-col items-end gap-2 shrink-0">
+						<div className="flex flex-col md:items-end gap-2 shrink-0">
 							<span className="text-sm font-semibold text-gray-600">
 								{completedContents}/{totalContents} コンテンツ
 							</span>
-							<div className="w-32 hidden md:block">
+							<div className="w-full md:w-32">
 								<Progress value={progressRate} className="h-3" />
 							</div>
 							<span className="text-xs text-gray-600">{progressRate}%</span>

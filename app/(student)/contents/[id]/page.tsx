@@ -201,7 +201,9 @@ export default function ContentDetailPage() {
 								<Badge variant="default">{contentInfo.label}</Badge>
 								{isCompleted && <Badge variant="success">完了済み</Badge>}
 							</div>
-							<h1 className="text-3xl font-bold">{content.title}</h1>
+							<h1 className="text-2xl sm:text-3xl font-bold">
+								{content.title}
+							</h1>
 						</div>
 					</div>
 				</div>

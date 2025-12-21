@@ -94,8 +94,10 @@ export default function StudentDashboardPage() {
 			<div className="space-y-6 sm:space-y-8">
 				{/* Header */}
 				<div>
-					<h1 className="text-3xl font-bold">ダッシュボード</h1>
-					<p className="text-muted-foreground">ようこそ、{user.name}さん</p>
+					<h1 className="text-2xl sm:text-3xl font-bold">ダッシュボード</h1>
+					<p className="text-sm sm:text-base text-muted-foreground">
+						ようこそ、{user.name}さん
+					</p>
 				</div>
 
 				{/* Progress Summary */}

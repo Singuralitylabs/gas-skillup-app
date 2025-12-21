@@ -94,8 +94,10 @@ function NewSubmissionForm() {
 
 				{/* ヘッダー */}
 				<div className="space-y-2">
-					<h1 className="text-3xl font-bold">課題を提出する</h1>
-					<p className="text-muted-foreground">コンテンツ: {content.title}</p>
+					<h1 className="text-2xl sm:text-3xl font-bold">課題を提出する</h1>
+					<p className="text-sm sm:text-base text-muted-foreground">
+						コンテンツ: {content.title}
+					</p>
 				</div>
 
 				{/* 提出フォーム */}
