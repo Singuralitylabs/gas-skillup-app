@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { SubmissionForm } from "@/components/ui";
+import { Breadcrumbs, SubmissionForm } from "@/components/ui";
 import { createSubmission, getCurrentUser, mockContents } from "@/lib/mock";
 import type { ContentResponse, SubmissionType, UserResponse } from "@/types";
 
@@ -85,23 +84,13 @@ function NewSubmissionForm() {
 		<div className="container py-8">
 			<div className="max-w-3xl mx-auto space-y-6">
 				{/* パンくずリスト */}
-				<nav className="flex items-center gap-2 text-sm text-muted-foreground">
-					<Link
-						href="/contents"
-						className="hover:text-foreground transition-colors"
-					>
-						コンテンツ一覧
-					</Link>
-					<span>/</span>
-					<Link
-						href={`/contents/${content.id}`}
-						className="hover:text-foreground transition-colors"
-					>
-						{content.title}
-					</Link>
-					<span>/</span>
-					<span className="text-foreground">課題提出</span>
-				</nav>
+				<Breadcrumbs
+					items={[
+						{ label: "コンテンツ一覧", href: "/contents" },
+						{ label: content.title, href: `/contents/${content.id}` },
+						{ label: "課題提出" },
+					]}
+				/>
 
 				{/* ヘッダー */}
 				<div className="space-y-2">

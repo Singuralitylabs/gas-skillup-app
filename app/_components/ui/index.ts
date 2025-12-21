@@ -5,6 +5,12 @@
  */
 
 export { Badge, type BadgeProps } from "./badge";
+export {
+	type BreadcrumbItem,
+	BreadcrumbSeparator,
+	Breadcrumbs,
+	type BreadcrumbsProps,
+} from "./breadcrumbs";
 export { Button, type ButtonProps } from "./button";
 export {
 	Card,
