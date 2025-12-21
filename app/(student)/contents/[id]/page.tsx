@@ -164,7 +164,7 @@ export default function ContentDetailPage() {
 	const contentInfo = getContentIcon(content.type);
 
 	return (
-		<div className="container py-8">
+		<div className="container p-8">
 			<div className="max-w-4xl mx-auto space-y-6">
 				{/* パンくずリスト */}
 				<nav className="flex items-center gap-2 text-sm text-muted-foreground">

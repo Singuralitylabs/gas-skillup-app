@@ -48,10 +48,10 @@ export default function ContentsPage() {
 			: 0;
 
 	return (
-		<div className="container py-8">
+		<div className="container p-8">
 			<div className="space-y-6">
 				{/* ヘッダー */}
-				<div className="flex items-center justify-between">
+				<div className="md:flex items-center justify-between">
 					<div>
 						<h1 className="text-3xl font-bold">学習コンテンツ</h1>
 						<p className="text-muted-foreground mt-1">
@@ -68,7 +68,7 @@ export default function ContentsPage() {
 
 				{/* 進捗サマリー */}
 				<div className="bg-linear-to-r from-blue-200 to-indigo-200 dark:from-blue-950 dark:to-indigo-950 rounded-lg p-6">
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
 						<div className="text-center">
 							<p className="text-sm text-gray-600 mb-1">全体進捗</p>
 							<p className="text-3xl font-bold text-blue-600 dark:text-blue-400">

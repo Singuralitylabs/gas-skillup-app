@@ -90,7 +90,7 @@ export default function StudentDashboardPage() {
 	}
 
 	return (
-		<div className="container py-8">
+		<div className="container py-8 px-4">
 			<div className="space-y-8">
 				{/* Header */}
 				<div>

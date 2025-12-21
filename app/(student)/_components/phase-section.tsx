@@ -69,42 +69,44 @@ export function PhaseSection({
 						/>
 					</svg>
 
-					<div className="flex-1 min-w-0">
-						<div className="flex items-center gap-3 mb-2">
-							<h2 className="text-xl font-bold text-left text-gray-700">
-								{phase.title}
-							</h2>
-							<Badge
-								variant={
-									status === "completed"
-										? "success"
+					<div className="md:flex w-full justify-between">
+						<div className="flex-1 min-w-0">
+							<div className="flex items-center gap-3 mb-2">
+								<h2 className="text-xl font-bold text-left text-gray-700">
+									{phase.title}
+								</h2>
+								<Badge
+									variant={
+										status === "completed"
+											? "success"
+											: status === "in_progress"
+												? "default"
+												: "secondary"
+									}
+								>
+									{status === "completed"
+										? "完了"
 										: status === "in_progress"
-											? "default"
-											: "secondary"
-								}
-							>
-								{status === "completed"
-									? "完了"
-									: status === "in_progress"
-										? "学習中"
-										: "未開始"}
-							</Badge>
+											? "学習中"
+											: "未開始"}
+								</Badge>
+							</div>
+							{phase.description && (
+								<p className="text-sm text-gray-600 text-left">
+									{phase.description}
+								</p>
+							)}
 						</div>
-						{phase.description && (
-							<p className="text-sm text-gray-600 text-left">
-								{phase.description}
-							</p>
-						)}
-					</div>
 
-					<div className="flex flex-col items-end gap-2 shrink-0">
-						<span className="text-sm font-semibold text-gray-600">
-							{completedContents}/{totalContents} コンテンツ
-						</span>
-						<div className="w-32 hidden md:block">
-							<Progress value={progressRate} className="h-3" />
+						<div className="flex flex-col items-end gap-2 shrink-0">
+							<span className="text-sm font-semibold text-gray-600">
+								{completedContents}/{totalContents} コンテンツ
+							</span>
+							<div className="w-32 hidden md:block">
+								<Progress value={progressRate} className="h-3" />
+							</div>
+							<span className="text-xs text-gray-600">{progressRate}%</span>
 						</div>
-						<span className="text-xs text-gray-600">{progressRate}%</span>
 					</div>
 				</div>
 			</button>
