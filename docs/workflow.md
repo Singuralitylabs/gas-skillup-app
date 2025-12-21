@@ -78,13 +78,13 @@ W10 ✓ 本番リリース
 - [x] プロジェクト構成設計（app router構造）
 - [x] 共通UIコンポーネント実装（Button, Input, Card, Badge等）
 - [x] レイアウトコンポーネント実装（Header, Footer, Navigation, Sidebar）
-- [ ] Tailwind CSS カスタム設定（カラーパレット、フォント）
-- [ ] TypeScript型定義（DBスキーマベース）
+- [x] Tailwind CSS カスタム設定（カラーパレット、フォント）
+- [x] TypeScript型定義（DBスキーマベース）
 
 **Vercel デプロイ** (1日)
-- [ ] Vercelプロジェクト作成
-- [ ] 継続的デプロイ設定（main branch）
-- [ ] プレビュー環境設定
+- [x] Vercelプロジェクト作成
+- [x] 継続的デプロイ設定（main branch）
+- [x] プレビュー環境設定
 
 ### 成果物
 - ✅ 設計ドキュメント一式（画面遷移図、UI/UX設計書、DB設計書、API仕様書）
