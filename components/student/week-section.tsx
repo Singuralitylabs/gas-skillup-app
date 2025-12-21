@@ -55,7 +55,9 @@ export function WeekSection({
 						/>
 					</svg>
 					<div className="text-left flex-1 min-w-0">
-						<h3 className="font-semibold text-base truncate text-gray-700">{week.title}</h3>
+						<h3 className="font-semibold text-base truncate text-gray-700">
+							{week.title}
+						</h3>
 						{week.description && (
 							<p className="text-sm text-gray-600 truncate">
 								{week.description}

@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { PhaseSection } from "@/components/student";
 import { Button } from "@/components/ui";
 import {
-	getContentsByWeek,
 	getCurrentUser,
 	getStoredUserProgress,
 	getWeeksByPhase,

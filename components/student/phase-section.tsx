@@ -71,7 +71,9 @@ export function PhaseSection({
 
 					<div className="flex-1 min-w-0">
 						<div className="flex items-center gap-3 mb-2">
-							<h2 className="text-xl font-bold text-left text-gray-700">{phase.title}</h2>
+							<h2 className="text-xl font-bold text-left text-gray-700">
+								{phase.title}
+							</h2>
 							<Badge
 								variant={
 									status === "completed"
@@ -102,9 +104,7 @@ export function PhaseSection({
 						<div className="w-32 hidden md:block">
 							<Progress value={progressRate} className="h-3" />
 						</div>
-						<span className="text-xs text-gray-600">
-							{progressRate}%
-						</span>
+						<span className="text-xs text-gray-600">{progressRate}%</span>
 					</div>
 				</div>
 			</button>
