@@ -119,16 +119,16 @@ W10 ✓ 本番リリース
 - [x] 課題履歴画面（提出済み一覧）
 
 **共通コンポーネント** (3日)
-- [ ] ProgressBar コンポーネント
-- [ ] ContentCard コンポーネント
-- [ ] AnnouncementCard コンポーネント
-- [ ] SubmissionForm コンポーネント
-- [ ] LoadingSpinner、EmptyState コンポーネント
+- [x] ProgressBar コンポーネント
+- [x] ContentCard コンポーネント
+- [x] AnnouncementCard コンポーネント
+- [x] SubmissionForm コンポーネント
+- [x] LoadingSpinner、EmptyState コンポーネント
 
 **ナビゲーション** (2日)
-- [ ] ヘッダーナビゲーション
-- [ ] サイドバーナビゲーション
-- [ ] モバイルメニュー
+- [x] ヘッダーナビゲーション
+- [x] サイドバーナビゲーション
+- [x] モバイルメニュー
 - [ ] パンくずリスト
 
 ### 成果物

@@ -33,4 +33,8 @@ export {
 } from "./loading-spinner";
 export { Progress, type ProgressProps } from "./progress";
 export { Select, type SelectProps } from "./select";
+export {
+	SubmissionForm,
+	type SubmissionFormProps,
+} from "./submission-form";
 export { Textarea, type TextareaProps } from "./textarea";
