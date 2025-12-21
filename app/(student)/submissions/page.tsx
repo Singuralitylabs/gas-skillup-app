@@ -65,10 +65,10 @@ export default function SubmissionsPage() {
 	const unreviewedCount = submissions.length - reviewedCount;
 
 	return (
-		<div className="container py-8">
+		<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
 			<div className="max-w-4xl mx-auto space-y-6">
 				{/* ヘッダー */}
-				<div className="flex items-center justify-between">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div>
 						<h1 className="text-3xl font-bold">課題提出履歴</h1>
 						<p className="text-muted-foreground mt-1">
@@ -78,6 +78,7 @@ export default function SubmissionsPage() {
 					<Button
 						variant="outline"
 						onClick={() => router.push("/student-dashboard")}
+						className="w-full sm:w-auto"
 					>
 						ダッシュボードに戻る
 					</Button>
@@ -85,7 +86,7 @@ export default function SubmissionsPage() {
 
 				{/* 統計サマリー */}
 				{submissions.length > 0 && (
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						<div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg p-6 text-center">
 							<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
 								総提出数

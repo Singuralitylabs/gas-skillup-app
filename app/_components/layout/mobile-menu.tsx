@@ -101,81 +101,79 @@ export function MobileMenu({ userName, navItems }: MobileMenuProps) {
 			)}
 
 			{/* スライドアウトメニュー */}
-			<div
-				className={`fixed top-0 right-0 bottom-0 w-64 bg-background border-l border-border z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-					isOpen ? "translate-x-0" : "translate-x-full"
-				}`}
-			>
-				<div className="flex flex-col h-full">
-					{/* ヘッダー */}
-					<div className="flex items-center justify-between p-4 border-b border-border">
-						<span className="font-semibold">メニュー</span>
-						<button
-							type="button"
-							onClick={() => setIsOpen(false)}
-							className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-							aria-label="メニューを閉じる"
-						>
-							<svg
-								className="w-5 h-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<title>閉じる</title>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M6 18L18 6M6 6l12 12"
-								/>
-							</svg>
-						</button>
-					</div>
-
-					{/* ユーザー情報 */}
-					{userName && (
-						<div className="p-4 border-b border-border">
-							<p className="text-sm text-muted-foreground">ログイン中</p>
-							<p className="font-medium">{userName}</p>
-						</div>
-					)}
-
-					{/* ナビゲーションリンク */}
-					<nav className="flex-1 overflow-y-auto">
-						<ul className="p-2 space-y-1">
-							{navItems.map((item) => (
-								<li key={item.href}>
-									<Link
-										href={item.href}
-										onClick={() => setIsOpen(false)}
-										className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-foreground hover:bg-muted transition-colors"
-									>
-										{item.label}
-									</Link>
-								</li>
-							))}
-						</ul>
-					</nav>
-
-					{/* フッター */}
-					<div className="p-4 border-t border-border">
-						{userName ? (
-							<Button
-								variant="outline"
-								className="w-full"
+			{isOpen && (
+				<div className="fixed top-0 right-0 bottom-0 w-64 bg-background border-l border-border z-50 md:hidden">
+					<div className="flex flex-col h-full">
+						{/* ヘッダー */}
+						<div className="flex items-center justify-between p-4 border-b border-border">
+							<span className="font-semibold">メニュー</span>
+							<button
+								type="button"
 								onClick={() => setIsOpen(false)}
+								className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+								aria-label="メニューを閉じる"
 							>
-								ログアウト
-							</Button>
-						) : (
-							<Button className="w-full" onClick={() => setIsOpen(false)}>
-								ログイン
-							</Button>
+								<svg
+									className="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<title>閉じる</title>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M6 18L18 6M6 6l12 12"
+									/>
+								</svg>
+							</button>
+						</div>
+
+						{/* ユーザー情報 */}
+						{userName && (
+							<div className="p-4 border-b border-border">
+								<p className="text-sm text-muted-foreground">ログイン中</p>
+								<p className="font-medium">{userName}</p>
+							</div>
 						)}
+
+						{/* ナビゲーションリンク */}
+						<nav className="flex-1 overflow-y-auto">
+							<ul className="p-2 space-y-1">
+								{navItems.map((item) => (
+									<li key={item.href}>
+										<Link
+											href={item.href}
+											onClick={() => setIsOpen(false)}
+											className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-foreground hover:bg-muted transition-colors"
+										>
+											{item.label}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</nav>
+
+						{/* フッター */}
+						<div className="p-4 border-t border-border">
+							{userName ? (
+								<Button
+									variant="outline"
+									className="w-full"
+									onClick={() => setIsOpen(false)}
+								>
+									ログアウト
+								</Button>
+							) : (
+								<Button className="w-full" onClick={() => setIsOpen(false)}>
+									ログイン
+								</Button>
+							)}
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 		</>
 	);
 }

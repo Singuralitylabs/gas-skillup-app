@@ -48,27 +48,28 @@ export default function ContentsPage() {
 			: 0;
 
 	return (
-		<div className="container p-8">
+		<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
 			<div className="space-y-6">
 				{/* ヘッダー */}
-				<div className="md:flex items-center justify-between">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h1 className="text-3xl font-bold">学習コンテンツ</h1>
-						<p className="text-muted-foreground mt-1">
+						<h1 className="text-2xl font-bold sm:text-3xl">学習コンテンツ</h1>
+						<p className="text-muted-foreground mt-1 text-sm sm:text-base">
 							Phase → Week → Contentの順に学習を進めましょう
 						</p>
 					</div>
 					<Button
 						variant="outline"
 						onClick={() => router.push("/student-dashboard")}
+						className="w-full sm:w-auto"
 					>
 						ダッシュボードに戻る
 					</Button>
 				</div>
 
 				{/* 進捗サマリー */}
-				<div className="bg-linear-to-r from-blue-200 to-indigo-200 dark:from-blue-950 dark:to-indigo-950 rounded-lg p-6">
-					<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+				<div className="bg-linear-to-r from-blue-200 to-indigo-200 dark:from-blue-950 dark:to-indigo-950 rounded-lg p-4 sm:p-6">
+					<div className="grid grid-cols-3 gap-4">
 						<div className="text-center">
 							<p className="text-sm text-gray-600 mb-1">全体進捗</p>
 							<p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
