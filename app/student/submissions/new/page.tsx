@@ -86,8 +86,8 @@ function NewSubmissionForm() {
 				{/* パンくずリスト */}
 				<Breadcrumbs
 					items={[
-						{ label: "コンテンツ一覧", href: "/contents" },
-						{ label: content.title, href: `/contents/${content.id}` },
+						{ label: "コンテンツ一覧", href: "/student/contents" },
+						{ label: content.title, href: `/student/contents/${content.id}` },
 						{ label: "課題提出" },
 					]}
 				/>
