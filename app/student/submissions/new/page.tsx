@@ -32,20 +32,20 @@ function NewSubmissionForm() {
 
 		// contentIdが指定されていない場合
 		if (!contentId) {
-			router.push("/contents");
+			router.push("/student/contents");
 			return;
 		}
 
 		// コンテンツを取得
 		const foundContent = mockContents.find((c) => c.id === contentId);
 		if (!foundContent) {
-			router.push("/contents");
+			router.push("/student/contents");
 			return;
 		}
 
 		// 演習タイプのコンテンツのみ提出可能
 		if (foundContent.type !== "exercise") {
-			router.push(`/contents/${contentId}`);
+			router.push(`/student/contents/${contentId}`);
 			return;
 		}
 
@@ -69,7 +69,7 @@ function NewSubmissionForm() {
 			await new Promise((resolve) => setTimeout(resolve, 500));
 
 			// 提出履歴ページにリダイレクト
-			router.push("/submissions");
+			router.push("/student/submissions");
 		} catch {
 			setError("提出に失敗しました。もう一度お試しください。");
 			setIsSubmitting(false);

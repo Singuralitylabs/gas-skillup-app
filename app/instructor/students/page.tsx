@@ -215,7 +215,7 @@ export default function StudentsPage() {
 										</td>
 										<td className="p-4 text-right">
 											<Link
-												href={`/students/${student.id}`}
+												href={`/instructor/students/${student.id}`}
 												className="text-sm font-medium text-primary hover:underline"
 											>
 												詳細を表示

@@ -98,7 +98,10 @@ export default function StudentDetailPage({ params }: StudentDetailPageProps) {
 					<h1 className="text-3xl font-bold">{student.name}</h1>
 					<p className="text-muted-foreground">{student.email}</p>
 				</div>
-				<Link href="/students" className="text-sm text-primary hover:underline">
+				<Link
+					href="/instructor/students"
+					className="text-sm text-primary hover:underline"
+				>
 					← 一覧に戻る
 				</Link>
 			</div>

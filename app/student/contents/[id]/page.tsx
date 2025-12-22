@@ -45,7 +45,7 @@ export default function ContentDetailPage() {
 		// コンテンツを取得
 		const foundContent = mockContents.find((c) => c.id === contentId);
 		if (!foundContent) {
-			router.push("/contents");
+			router.push("/student/contents");
 			return;
 		}
 		setContent(foundContent);
@@ -86,7 +86,7 @@ export default function ContentDetailPage() {
 
 		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
 		if (currentIndex < sameWeekContents.length - 1) {
-			router.push(`/contents/${sameWeekContents[currentIndex + 1].id}`);
+			router.push(`/student/contents/${sameWeekContents[currentIndex + 1].id}`);
 		} else {
 			// 次のWeekの最初のコンテンツへ
 			const currentWeek = mockWeeks.find((w) => w.id === content.weekId);
@@ -102,7 +102,7 @@ export default function ContentDetailPage() {
 						.sort((a, b) => a.orderIndex - b.orderIndex)[0];
 
 					if (nextContent) {
-						router.push(`/contents/${nextContent.id}`);
+						router.push(`/student/contents/${nextContent.id}`);
 					}
 				}
 			}
@@ -119,7 +119,7 @@ export default function ContentDetailPage() {
 
 		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
 		if (currentIndex > 0) {
-			router.push(`/contents/${sameWeekContents[currentIndex - 1].id}`);
+			router.push(`/student/contents/${sameWeekContents[currentIndex - 1].id}`);
 		} else {
 			// 前のWeekの最後のコンテンツへ
 			const currentWeek = mockWeeks.find((w) => w.id === content.weekId);
@@ -136,7 +136,7 @@ export default function ContentDetailPage() {
 
 					const prevContent = prevContents[prevContents.length - 1];
 					if (prevContent) {
-						router.push(`/contents/${prevContent.id}`);
+						router.push(`/student/contents/${prevContent.id}`);
 					}
 				}
 			}
@@ -169,7 +169,7 @@ export default function ContentDetailPage() {
 				{/* パンくずリスト */}
 				<nav className="flex items-center gap-2 text-sm text-muted-foreground">
 					<Link
-						href="/contents"
+						href="/student/contents"
 						className="hover:text-foreground transition-colors"
 					>
 						コンテンツ一覧
@@ -228,7 +228,9 @@ export default function ContentDetailPage() {
 									<p className="text-sm text-muted-foreground mb-4">
 										この演習課題を完了したら、課題提出ページから提出してください。
 									</p>
-									<Link href={`/submissions/new?contentId=${content.id}`}>
+									<Link
+										href={`/student/submissions/new?contentId=${content.id}`}
+									>
 										<Button>課題を提出する</Button>
 									</Link>
 								</div>

@@ -41,7 +41,7 @@ function getContentTypeLabel(type: string): string {
 
 export function ContentCard({ content, isCompleted }: ContentCardProps) {
 	return (
-		<Link href={`/contents/${content.id}`} className="block group">
+		<Link href={`/student/contents/${content.id}`} className="block group">
 			<div
 				className={`
 					flex items-center gap-3 p-4 rounded-lg border transition-all

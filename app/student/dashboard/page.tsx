@@ -114,7 +114,7 @@ export default function StudentDashboardPage() {
 							<CardTitle>クイックアクション</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-3">
-							<Link href="/contents" className="block">
+							<Link href="/student/contents" className="block">
 								<Button
 									variant="default"
 									className="w-full justify-start"
@@ -136,7 +136,7 @@ export default function StudentDashboardPage() {
 									コンテンツを学習する
 								</Button>
 							</Link>
-							<Link href="/submissions" className="block">
+							<Link href="/student/submissions" className="block">
 								<Button
 									variant="outline"
 									className="w-full justify-start"
@@ -158,7 +158,7 @@ export default function StudentDashboardPage() {
 									課題の提出状況を見る
 								</Button>
 							</Link>
-							<Link href="/announcements" className="block">
+							<Link href="/student/announcements" className="block">
 								<Button
 									variant="outline"
 									className="w-full justify-start"
@@ -237,7 +237,7 @@ export default function StudentDashboardPage() {
 				<div className="space-y-4">
 					<div className="flex items-center justify-between">
 						<h2 className="text-2xl font-bold">最新のお知らせ</h2>
-						<Link href="/announcements">
+						<Link href="/student/announcements">
 							<Button variant="ghost" size="sm">
 								すべて見る
 							</Button>

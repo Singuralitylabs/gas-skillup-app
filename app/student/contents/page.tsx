@@ -60,7 +60,7 @@ export default function ContentsPage() {
 					</div>
 					<Button
 						variant="outline"
-						onClick={() => router.push("/student-dashboard")}
+						onClick={() => router.push("/student/dashboard")}
 						className="w-full sm:w-auto"
 					>
 						ダッシュボードに戻る

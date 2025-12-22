@@ -37,7 +37,7 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 					<div className="flex-1 min-w-0">
 						<CardTitle className="text-lg mb-2">
 							<Link
-								href={`/contents/${content.id}`}
+								href={`/student/contents/${content.id}`}
 								className="hover:text-blue-600 transition-colors wrap-break-word"
 							>
 								{content.title}

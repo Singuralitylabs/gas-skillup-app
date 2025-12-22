@@ -77,7 +77,7 @@ export default function SubmissionsPage() {
 					</div>
 					<Button
 						variant="outline"
-						onClick={() => router.push("/student-dashboard")}
+						onClick={() => router.push("/student/dashboard")}
 						className="w-full sm:w-auto"
 					>
 						ダッシュボードに戻る
@@ -118,7 +118,9 @@ export default function SubmissionsPage() {
 
 				{/* 提出履歴リスト */}
 				{submissions.length === 0 ? (
-					<EmptySubmissions onSubmitClick={() => router.push("/contents")} />
+					<EmptySubmissions
+						onSubmitClick={() => router.push("/student/contents")}
+					/>
 				) : (
 					<div className="space-y-4">
 						{submissions.map((submission) => {
