@@ -1,13 +1,24 @@
+import { Badge } from "@/components/ui";
 import {
-	Badge,
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui";
+	getDashboardStats,
+	getProgressDistribution,
+	getRecentPendingSubmissions,
+	getSubmissionTrend,
+} from "@/lib/mock/stats";
+import { formatDate } from "@/lib/utils/format";
+import {
+	KpiCard,
+	ProgressDistributionChart,
+	SubmissionTrendChart,
+} from "../_components";
 
 export default function InstructorDashboardPage() {
+	// 統計データを取得
+	const stats = getDashboardStats();
+	const progressDistribution = getProgressDistribution();
+	const submissionTrend = getSubmissionTrend();
+	const recentSubmissions = getRecentPendingSubmissions(5);
+
 	return (
 		<div className="space-y-8">
 			{/* Header */}
@@ -16,89 +27,70 @@ export default function InstructorDashboardPage() {
 				<p className="text-muted-foreground">受講生の状況を確認</p>
 			</div>
 
-			{/* Stats Grid */}
-			<div className="grid gap-4 md:grid-cols-4">
-				<Card>
-					<CardHeader>
-						<CardDescription>総受講生数</CardDescription>
-						<CardTitle className="text-3xl">45人</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card>
-					<CardHeader>
-						<CardDescription>アクティブ受講生</CardDescription>
-						<CardTitle className="text-3xl">38人</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card>
-					<CardHeader>
-						<CardDescription>未確認課題</CardDescription>
-						<CardTitle className="text-3xl">12件</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card>
-					<CardHeader>
-						<CardDescription>平均進捗率</CardDescription>
-						<CardTitle className="text-3xl">65%</CardTitle>
-					</CardHeader>
-				</Card>
+			{/* KPI Grid */}
+			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+				<KpiCard
+					title="総受講生数"
+					value={`${stats.totalStudents}人`}
+					description={`承認済み: ${stats.approvedStudents}人 / 未承認: ${stats.pendingStudents}人`}
+				/>
+				<KpiCard
+					title="アクティブ受講生"
+					value={`${stats.activeStudents}人`}
+					description="過去7日間に学習した受講生"
+				/>
+				<KpiCard
+					title="未確認課題"
+					value={`${stats.pendingSubmissions}件`}
+					description={`全提出数: ${stats.totalSubmissions}件`}
+				/>
+				<KpiCard
+					title="平均進捗率"
+					value={`${stats.averageProgress}%`}
+					description={`完了コンテンツ: ${stats.totalCompletedContents} / ${stats.totalContents}`}
+				/>
 			</div>
 
-			{/* Recent Submissions */}
-			<Card>
-				<CardHeader>
-					<CardTitle>最近の課題提出</CardTitle>
-					<CardDescription>確認が必要な課題一覧</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="space-y-4">
-						{[
-							{
-								student: "山田 太郎",
-								content: "Phase 2 - Week 3 課題",
-								date: "2024-01-15",
-								status: "pending",
-							},
-							{
-								student: "田中 花子",
-								content: "Phase 1 - Week 5 課題",
-								date: "2024-01-15",
-								status: "pending",
-							},
-							{
-								student: "鈴木 一郎",
-								content: "Phase 2 - Week 2 課題",
-								date: "2024-01-14",
-								status: "reviewed",
-							},
-						].map((submission, index) => (
+			{/* Charts Grid */}
+			<div className="grid gap-4 md:grid-cols-2">
+				<ProgressDistributionChart data={progressDistribution} />
+				<SubmissionTrendChart data={submissionTrend} />
+			</div>
+
+			{/* Recent Pending Submissions */}
+			<div className="rounded-lg border border-border">
+				<div className="border-b border-border p-6">
+					<h2 className="text-xl font-semibold">最近の未確認課題</h2>
+					<p className="text-sm text-muted-foreground">確認が必要な課題一覧</p>
+				</div>
+				<div className="divide-y divide-border">
+					{recentSubmissions.length > 0 ? (
+						recentSubmissions.map((submission) => (
 							<div
-								key={index}
-								className="flex items-center justify-between rounded-lg border border-border p-4"
+								key={submission.id}
+								className="flex items-center justify-between p-6 transition-colors hover:bg-muted/50"
 							>
 								<div className="space-y-1">
-									<p className="text-sm font-medium">{submission.student}</p>
+									<p className="text-sm font-medium">{submission.userName}</p>
 									<p className="text-sm text-muted-foreground">
-										{submission.content}
+										{submission.contentTitle}
 									</p>
 								</div>
 								<div className="flex items-center gap-4">
 									<span className="text-sm text-muted-foreground">
-										{submission.date}
+										{formatDate(submission.createdAt)}
 									</span>
-									<Badge
-										variant={
-											submission.status === "pending" ? "warning" : "success"
-										}
-									>
-										{submission.status === "pending" ? "未確認" : "確認済み"}
-									</Badge>
+									<Badge variant="warning">未確認</Badge>
 								</div>
 							</div>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+						))
+					) : (
+						<div className="p-6 text-center text-muted-foreground">
+							未確認の課題はありません
+						</div>
+					)}
+				</div>
+			</div>
 		</div>
 	);
 }
