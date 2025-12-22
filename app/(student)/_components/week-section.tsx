@@ -69,7 +69,7 @@ export function WeekSection({
 					<span className="text-sm font-medium text-gray-600">
 						{completedContents}/{totalContents}
 					</span>
-					<div className="w-24 hidden sm:block">
+					<div className="w-16 sm:w-24">
 						<Progress value={progressRate} className="h-2" />
 					</div>
 				</div>

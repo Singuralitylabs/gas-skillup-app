@@ -33,26 +33,29 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 	return (
 		<Card>
 			<CardHeader>
-				<div className="flex items-start justify-between gap-4">
-					<div className="flex-1">
+				<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+					<div className="flex-1 min-w-0">
 						<CardTitle className="text-lg mb-2">
 							<Link
 								href={`/contents/${content.id}`}
-								className="hover:text-blue-600 transition-colors"
+								className="hover:text-blue-600 transition-colors wrap-break-word"
 							>
 								{content.title}
 							</Link>
 						</CardTitle>
-						<div className="flex items-center gap-3 text-sm text-muted-foreground">
+						<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-muted-foreground">
 							<span>提出日時: {formatDate(submission.createdAt)}</span>
-							<span>•</span>
+							<span className="hidden sm:inline">•</span>
 							<span>
 								タイプ:{" "}
 								{submission.submissionType === "code" ? "コード" : "URL"}
 							</span>
 						</div>
 					</div>
-					<Badge variant={hasFeeback ? "success" : "default"}>
+					<Badge
+						variant={hasFeeback ? "success" : "default"}
+						className="self-start"
+					>
 						{hasFeeback ? "フィードバック済み" : "未レビュー"}
 					</Badge>
 				</div>

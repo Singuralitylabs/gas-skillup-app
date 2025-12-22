@@ -164,8 +164,8 @@ export default function ContentDetailPage() {
 	const contentInfo = getContentIcon(content.type);
 
 	return (
-		<div className="container py-8">
-			<div className="max-w-4xl mx-auto space-y-6">
+		<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
+			<div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 				{/* パンくずリスト */}
 				<nav className="flex items-center gap-2 text-sm text-muted-foreground">
 					<Link
@@ -201,7 +201,9 @@ export default function ContentDetailPage() {
 								<Badge variant="default">{contentInfo.label}</Badge>
 								{isCompleted && <Badge variant="success">完了済み</Badge>}
 							</div>
-							<h1 className="text-3xl font-bold">{content.title}</h1>
+							<h1 className="text-2xl sm:text-3xl font-bold">
+								{content.title}
+							</h1>
 						</div>
 					</div>
 				</div>
@@ -236,8 +238,12 @@ export default function ContentDetailPage() {
 				</Card>
 
 				{/* アクションボタン */}
-				<div className="flex items-center justify-between gap-4">
-					<Button variant="outline" onClick={handlePrevious}>
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<Button
+						variant="outline"
+						onClick={handlePrevious}
+						className="w-full sm:w-auto order-2 sm:order-1"
+					>
 						<svg
 							className="w-4 h-4 mr-2"
 							fill="none"
@@ -257,7 +263,7 @@ export default function ContentDetailPage() {
 					<Button
 						variant={isCompleted ? "outline" : "default"}
 						onClick={handleToggleComplete}
-						className="min-w-[200px]"
+						className="w-full sm:w-auto sm:min-w-[200px] order-1 sm:order-2"
 					>
 						{isCompleted ? (
 							<>
@@ -296,7 +302,11 @@ export default function ContentDetailPage() {
 						)}
 					</Button>
 
-					<Button variant="outline" onClick={handleNext}>
+					<Button
+						variant="outline"
+						onClick={handleNext}
+						className="w-full sm:w-auto order-3"
+					>
 						次のコンテンツ
 						<svg
 							className="w-4 h-4 ml-2"

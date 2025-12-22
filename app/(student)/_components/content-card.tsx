@@ -78,7 +78,7 @@ export function ContentCard({ content, isCompleted }: ContentCardProps) {
 						<span className="text-xl" role="img" aria-label={content.type}>
 							{getContentIcon(content.type)}
 						</span>
-						<h3 className="font-medium text-sm group-hover:text-primary transition-colors truncate text-gray-700">
+						<h3 className="font-medium text-sm md:text-base group-hover:text-primary transition-colors truncate text-gray-700">
 							{content.title}
 						</h3>
 					</div>

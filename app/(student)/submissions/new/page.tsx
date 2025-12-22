@@ -81,8 +81,8 @@ function NewSubmissionForm() {
 	}
 
 	return (
-		<div className="container py-8">
-			<div className="max-w-3xl mx-auto space-y-6">
+		<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
+			<div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
 				{/* パンくずリスト */}
 				<Breadcrumbs
 					items={[
@@ -94,8 +94,10 @@ function NewSubmissionForm() {
 
 				{/* ヘッダー */}
 				<div className="space-y-2">
-					<h1 className="text-3xl font-bold">課題を提出する</h1>
-					<p className="text-muted-foreground">コンテンツ: {content.title}</p>
+					<h1 className="text-2xl sm:text-3xl font-bold">課題を提出する</h1>
+					<p className="text-sm sm:text-base text-muted-foreground">
+						コンテンツ: {content.title}
+					</p>
 				</div>
 
 				{/* 提出フォーム */}
@@ -144,7 +146,7 @@ export default function NewSubmissionPage() {
 	return (
 		<Suspense
 			fallback={
-				<div className="container py-8">
+				<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
 					<div className="max-w-3xl mx-auto">
 						<p className="text-center text-muted-foreground">読み込み中...</p>
 					</div>

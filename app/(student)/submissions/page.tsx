@@ -65,19 +65,20 @@ export default function SubmissionsPage() {
 	const unreviewedCount = submissions.length - reviewedCount;
 
 	return (
-		<div className="container py-8">
+		<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
 			<div className="max-w-4xl mx-auto space-y-6">
 				{/* ヘッダー */}
-				<div className="flex items-center justify-between">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h1 className="text-3xl font-bold">課題提出履歴</h1>
-						<p className="text-muted-foreground mt-1">
+						<h1 className="text-2xl sm:text-3xl font-bold">課題提出履歴</h1>
+						<p className="text-sm sm:text-base text-muted-foreground mt-1">
 							提出した課題とフィードバックを確認できます
 						</p>
 					</div>
 					<Button
 						variant="outline"
 						onClick={() => router.push("/student-dashboard")}
+						className="w-full sm:w-auto"
 					>
 						ダッシュボードに戻る
 					</Button>
@@ -85,30 +86,32 @@ export default function SubmissionsPage() {
 
 				{/* 統計サマリー */}
 				{submissions.length > 0 && (
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						<div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg p-6 text-center">
-							<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-								総提出数
-							</p>
-							<p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-								{submissions.length}
-							</p>
-						</div>
-						<div className="bg-linear-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg p-6 text-center">
-							<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-								フィードバック済み
-							</p>
-							<p className="text-3xl font-bold text-green-600 dark:text-green-400">
-								{reviewedCount}
-							</p>
-						</div>
-						<div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 text-center">
-							<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-								未レビュー
-							</p>
-							<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
-								{unreviewedCount}
-							</p>
+					<div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg p-6">
+						<div className="grid grid-cols-3 gap-4 text-center">
+							<div>
+								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+									総提出数
+								</p>
+								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+									{submissions.length}
+								</p>
+							</div>
+							<div>
+								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+									レビュー済み
+								</p>
+								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+									{reviewedCount}
+								</p>
+							</div>
+							<div>
+								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+									未レビュー
+								</p>
+								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+									{unreviewedCount}
+								</p>
+							</div>
 						</div>
 					</div>
 				)}
