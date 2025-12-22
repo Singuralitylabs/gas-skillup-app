@@ -2,11 +2,11 @@ import type { ReactNode } from "react";
 import { Footer, Header, Sidebar, type SidebarItem } from "@/components/layout";
 
 const instructorSidebarItems: SidebarItem[] = [
-	{ href: "/instructor-dashboard", label: "ダッシュボード", icon: "📊" },
+	{ href: "/dashboard", label: "ダッシュボード", icon: "📊" },
 	{ href: "/students", label: "受講生管理", icon: "👥" },
-	{ href: "/contents-manage", label: "コンテンツ管理", icon: "📚" },
+	{ href: "/contents", label: "コンテンツ管理", icon: "📚" },
 	{ href: "/submissions", label: "課題確認", icon: "📝" },
-	{ href: "/analytics", label: "分析", icon: "📈" },
+	{ href: "/announcements", label: "お知らせ管理", icon: "📢" },
 ];
 
 export default function InstructorLayout({
