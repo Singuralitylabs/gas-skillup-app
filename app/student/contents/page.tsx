@@ -68,23 +68,21 @@ export default function ContentsPage() {
 				</div>
 
 				{/* 進捗サマリー */}
-				<div className="bg-linear-to-r from-blue-200 to-indigo-200 dark:from-blue-950 dark:to-indigo-950 rounded-lg p-4 sm:p-6">
+				<div className="bg-primary/10 rounded-lg p-4 sm:p-6">
 					<div className="grid grid-cols-3 gap-4">
 						<div className="text-center">
-							<p className="text-sm text-gray-600 mb-1">全体進捗</p>
-							<p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-								{progressRate}%
-							</p>
+							<p className="text-sm text-muted-foreground mb-1">全体進捗</p>
+							<p className="text-3xl font-bold text-primary">{progressRate}%</p>
 						</div>
 						<div className="text-center">
-							<p className="text-sm text-gray-600 mb-1">完了</p>
-							<p className="text-3xl font-bold text-green-600 dark:text-green-400">
+							<p className="text-sm text-muted-foreground mb-1">完了</p>
+							<p className="text-3xl font-bold text-success">
 								{completedContents}
 							</p>
 						</div>
 						<div className="text-center">
-							<p className="text-sm text-gray-600 mb-1">残り</p>
-							<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+							<p className="text-sm text-muted-foreground mb-1">残り</p>
+							<p className="text-3xl font-bold text-muted-foreground">
 								{totalContents - completedContents}
 							</p>
 						</div>
@@ -115,10 +113,10 @@ export default function ContentsPage() {
 				</div>
 
 				{/* 補足情報 */}
-				<div className="bg-blue-200 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+				<div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
 					<div className="flex items-start gap-3">
 						<svg
-							className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
+							className="w-5 h-5 text-primary shrink-0 mt-0.5"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -131,10 +129,8 @@ export default function ContentsPage() {
 							/>
 						</svg>
 						<div className="text-sm">
-							<p className="font-medium text-blue-900 dark:text-blue-100 mb-1">
-								学習のヒント
-							</p>
-							<ul className="text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
+							<p className="font-medium text-foreground mb-1">学習のヒント</p>
+							<ul className="text-primary space-y-1 list-disc list-inside">
 								<li>各Phaseは順番に学習することをお勧めします</li>
 								<li>動画を見た後、テキストで復習し、演習で定着させましょう</li>
 								<li>演習課題は必ず提出してフィードバックを受けましょう</li>

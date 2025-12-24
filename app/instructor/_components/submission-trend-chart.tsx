@@ -66,7 +66,7 @@ export function SubmissionTrendChart({ data }: SubmissionTrendChartProps) {
 										<div className="rounded-lg border bg-background p-2 shadow-sm">
 											<div className="grid gap-2">
 												<div className="flex flex-col">
-													<span className="text-[0.70rem] uppercase text-muted-foreground">
+													<span className="text-xs uppercase text-muted-foreground">
 														日付
 													</span>
 													<span className="font-bold text-muted-foreground">
@@ -74,18 +74,18 @@ export function SubmissionTrendChart({ data }: SubmissionTrendChartProps) {
 													</span>
 												</div>
 												<div className="flex flex-col">
-													<span className="text-[0.70rem] uppercase text-muted-foreground">
+													<span className="text-xs uppercase text-muted-foreground">
 														提出数
 													</span>
-													<span className="font-bold text-blue-600">
+													<span className="font-bold text-primary">
 														{payload[0].value}件
 													</span>
 												</div>
 												<div className="flex flex-col">
-													<span className="text-[0.70rem] uppercase text-muted-foreground">
+													<span className="text-xs uppercase text-muted-foreground">
 														レビュー済み
 													</span>
-													<span className="font-bold text-green-600">
+													<span className="font-bold text-success">
 														{payload[1]?.value || 0}件
 													</span>
 												</div>
@@ -101,26 +101,26 @@ export function SubmissionTrendChart({ data }: SubmissionTrendChartProps) {
 							dataKey="submissions"
 							stroke="currentColor"
 							strokeWidth={2}
-							className="stroke-blue-600"
-							dot={{ fill: "currentColor", className: "fill-blue-600" }}
+							className="stroke-primary"
+							dot={{ fill: "currentColor", className: "fill-primary" }}
 						/>
 						<Line
 							type="monotone"
 							dataKey="reviewed"
 							stroke="currentColor"
 							strokeWidth={2}
-							className="stroke-green-600"
-							dot={{ fill: "currentColor", className: "fill-green-600" }}
+							className="stroke-success"
+							dot={{ fill: "currentColor", className: "fill-success" }}
 						/>
 					</LineChart>
 				</ResponsiveContainer>
 				<div className="mt-4 flex items-center justify-center gap-6 text-sm">
 					<div className="flex items-center gap-2">
-						<div className="h-3 w-3 rounded-full bg-blue-600" />
+						<div className="h-3 w-3 rounded-full bg-primary" />
 						<span className="text-muted-foreground">提出数</span>
 					</div>
 					<div className="flex items-center gap-2">
-						<div className="h-3 w-3 rounded-full bg-green-600" />
+						<div className="h-3 w-3 rounded-full bg-success" />
 						<span className="text-muted-foreground">レビュー済み</span>
 					</div>
 				</div>

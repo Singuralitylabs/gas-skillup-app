@@ -110,10 +110,10 @@ function NewSubmissionForm() {
 				/>
 
 				{/* 注意事項 */}
-				<div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+				<div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
 					<div className="flex items-start gap-3">
 						<svg
-							className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
+							className="w-5 h-5 text-primary shrink-0 mt-0.5"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -126,7 +126,7 @@ function NewSubmissionForm() {
 								d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 							/>
 						</svg>
-						<div className="text-sm text-blue-700 dark:text-blue-300">
+						<div className="text-sm text-primary">
 							<p className="font-medium mb-1">提出前の確認</p>
 							<ul className="list-disc list-inside space-y-1">
 								<li>提出内容が課題の要件を満たしているか確認してください</li>

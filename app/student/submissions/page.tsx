@@ -86,29 +86,25 @@ export default function SubmissionsPage() {
 
 				{/* 統計サマリー */}
 				{submissions.length > 0 && (
-					<div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg p-6">
+					<div className="bg-primary/10 rounded-lg p-6">
 						<div className="grid grid-cols-3 gap-4 text-center">
 							<div>
-								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-									総提出数
-								</p>
-								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+								<p className="text-sm text-muted-foreground mb-1">総提出数</p>
+								<p className="text-3xl font-bold text-foreground">
 									{submissions.length}
 								</p>
 							</div>
 							<div>
-								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+								<p className="text-sm text-muted-foreground mb-1">
 									レビュー済み
 								</p>
-								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+								<p className="text-3xl font-bold text-foreground">
 									{reviewedCount}
 								</p>
 							</div>
 							<div>
-								<p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-									未レビュー
-								</p>
-								<p className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+								<p className="text-sm text-muted-foreground mb-1">未レビュー</p>
+								<p className="text-3xl font-bold text-foreground">
 									{unreviewedCount}
 								</p>
 							</div>
@@ -140,10 +136,10 @@ export default function SubmissionsPage() {
 
 				{/* ヘルプ情報 */}
 				{submissions.length > 0 && (
-					<div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+					<div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
 						<div className="flex items-start gap-3">
 							<svg
-								className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
+								className="w-5 h-5 text-primary shrink-0 mt-0.5"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -156,7 +152,7 @@ export default function SubmissionsPage() {
 									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 								/>
 							</svg>
-							<div className="text-sm text-blue-700 dark:text-blue-300">
+							<div className="text-sm text-primary">
 								<p className="font-medium mb-1">フィードバックについて</p>
 								<ul className="list-disc list-inside space-y-1">
 									<li>提出後、講師がレビューしてフィードバックを返します</li>
