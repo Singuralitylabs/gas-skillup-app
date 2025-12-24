@@ -20,13 +20,15 @@ import {
 import { formatDate } from "@/lib/utils/format";
 
 interface StudentDetailPageProps {
-	params: {
+	params: Promise<{
 		id: string;
-	};
+	}>;
 }
 
-export default function StudentDetailPage({ params }: StudentDetailPageProps) {
-	const { id } = params;
+export default async function StudentDetailPage({
+	params,
+}: StudentDetailPageProps) {
+	const { id } = await params;
 
 	// 受講生データを取得
 	const student = mockUsers.find((user) => user.id === id);
