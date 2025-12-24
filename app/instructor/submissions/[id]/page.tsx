@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
 import { use, useState } from "react";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import {
 	Badge,
 	Button,
@@ -201,11 +202,13 @@ export default function SubmissionDetailPage({
 						<CardTitle>課題内容（参考）</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="prose prose-sm max-w-none">
+						{content.type === "video" ? (
 							<div className="whitespace-pre-wrap text-sm text-muted-foreground">
 								{content.content}
 							</div>
-						</div>
+						) : (
+							<MarkdownRenderer content={content.content} />
+						)}
 					</CardContent>
 				</Card>
 			)}

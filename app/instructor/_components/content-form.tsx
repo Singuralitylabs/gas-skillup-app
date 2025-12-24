@@ -1,9 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/app/_components/ui";
 import { getWeeksByPhase, mockPhases, mockWeeks } from "@/app/_lib/mock";
 import type { ContentResponse, ContentType } from "@/types";
+
+// Markdownエディタを動的インポート（SSR無効化）
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="h-96 border rounded bg-muted/30 animate-pulse flex items-center justify-center">
+			<p className="text-sm text-muted-foreground">エディタを読み込み中...</p>
+		</div>
+	),
+});
 
 export interface ContentFormProps {
 	content?: ContentResponse;
@@ -170,17 +181,32 @@ export function ContentForm({
 				<label htmlFor="content" className="block text-sm font-medium mb-1">
 					{getContentLabel()} <span className="text-destructive">*</span>
 				</label>
-				<Textarea
-					id="content"
-					value={contentText}
-					onChange={(e) => setContentText(e.target.value)}
-					placeholder={getContentPlaceholder()}
-					rows={type === "video" ? 3 : 12}
-					required
-				/>
+				{type === "video" ? (
+					<Textarea
+						id="content"
+						value={contentText}
+						onChange={(e) => setContentText(e.target.value)}
+						placeholder={getContentPlaceholder()}
+						rows={3}
+						required
+					/>
+				) : (
+					<div data-color-mode="light">
+						<MDEditor
+							value={contentText}
+							onChange={(value) => setContentText(value || "")}
+							height={400}
+							preview="edit"
+							textareaProps={{
+								placeholder: getContentPlaceholder(),
+								required: true,
+							}}
+						/>
+					</div>
+				)}
 				{type !== "video" && (
 					<p className="text-xs text-muted-foreground mt-1">
-						Markdown記法が使用できます
+						Markdown記法でプレビューを見ながら編集できます
 					</p>
 				)}
 			</div>
