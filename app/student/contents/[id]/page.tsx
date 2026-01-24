@@ -4,15 +4,17 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge, Button, Card, CardContent } from "@/components/ui";
-import {
-	getCurrentUser,
-	getStoredUserProgress,
-	mockContents,
-	mockPhases,
-	mockWeeks,
-	updateProgress,
-} from "@/lib/mock";
-import type { ContentResponse, UserResponse } from "@/types";
+import { createClient } from "@/app/_lib/supabase/client";
+import type {
+	Content,
+	Phase,
+	UserProgress,
+	Week,
+} from "@/app/_types";
+import type {
+	ContentResponse,
+	UserResponse,
+} from "@/app/_types";
 import { MarkdownViewer, YouTubePlayer } from "../../_components";
 
 export default function ContentDetailPage() {
@@ -27,124 +29,275 @@ export default function ContentDetailPage() {
 	const [phase, setPhase] = useState<{ id: string; title: string } | null>(
 		null,
 	);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			router.push("/login");
-			return;
-		}
+		async function loadData() {
+			const supabase = createClient();
 
-		if (!currentUser.approved) {
-			router.push("/pending-approval");
-			return;
-		}
+			// 現在のユーザーを取得
+			const {
+				data: { user: authUser },
+				error: authError,
+			} = await supabase.auth.getUser();
 
-		setUser(currentUser);
-
-		// コンテンツを取得
-		const foundContent = mockContents.find((c) => c.id === contentId);
-		if (!foundContent) {
-			router.push("/student/contents");
-			return;
-		}
-		setContent(foundContent);
-
-		// Weekを取得
-		const foundWeek = mockWeeks.find((w) => w.id === foundContent.weekId);
-		if (foundWeek) {
-			setWeek({ id: foundWeek.id, title: foundWeek.title });
-
-			// Phaseを取得
-			const foundPhase = mockPhases.find((p) => p.id === foundWeek.phaseId);
-			if (foundPhase) {
-				setPhase({ id: foundPhase.id, title: foundPhase.title });
+			if (authError || !authUser) {
+				router.push("/login");
+				return;
 			}
+
+			// プロフィール情報を取得
+			const { data: profile, error: profileError } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", authUser.id)
+				.single();
+
+			if (profileError || !profile) {
+				router.push("/login");
+				return;
+			}
+
+			if (!profile.approved) {
+				router.push("/pending-approval");
+				return;
+			}
+
+			// UserResponse型に変換
+			const userResponse: UserResponse = {
+				id: profile.id,
+				email: profile.email,
+				name: profile.name,
+				role: profile.role,
+				approved: profile.approved,
+				createdAt: profile.created_at,
+			};
+
+			setUser(userResponse);
+
+			// コンテンツを取得
+			const { data: contentData, error: contentError } = await supabase
+				.from("contents")
+				.select("*")
+				.eq("id", contentId)
+				.single();
+
+			if (contentError || !contentData) {
+				router.push("/student/contents");
+				return;
+			}
+
+			// ContentResponse型に変換
+			const contentResponse: ContentResponse = {
+				id: contentData.id,
+				weekId: contentData.week_id,
+				type: contentData.type,
+				title: contentData.title,
+				content: contentData.content,
+				orderIndex: contentData.order_index,
+				createdAt: contentData.created_at,
+			};
+
+			setContent(contentResponse);
+
+			// Weekを取得
+			const { data: weekData, error: weekError } = await supabase
+				.from("weeks")
+				.select("*")
+				.eq("id", contentData.week_id)
+				.single();
+
+			if (!weekError && weekData) {
+				setWeek({ id: weekData.id, title: weekData.title });
+
+				// Phaseを取得
+				const { data: phaseData, error: phaseError } = await supabase
+					.from("phases")
+					.select("*")
+					.eq("id", weekData.phase_id)
+					.single();
+
+				if (!phaseError && phaseData) {
+					setPhase({ id: phaseData.id, title: phaseData.title });
+				}
+			}
+
+			// 進捗状態を取得
+			const { data: progressData, error: progressError } = await supabase
+				.from("user_progress")
+				.select("*")
+				.eq("user_id", authUser.id)
+				.eq("content_id", contentId)
+				.single();
+
+			if (!progressError && progressData) {
+				setIsCompleted(progressData.completed);
+			} else {
+				setIsCompleted(false);
+			}
+
+			setIsLoading(false);
 		}
 
-		// 進捗状態を取得
-		const userProgress = getStoredUserProgress(currentUser.id);
-		const progress = userProgress.find((p) => p.contentId === contentId);
-		setIsCompleted(progress?.completed || false);
+		loadData();
 	}, [contentId, router]);
 
-	const handleToggleComplete = () => {
+	const handleToggleComplete = async () => {
 		if (!user || !content) return;
 
+		const supabase = createClient();
 		const newStatus = !isCompleted;
-		updateProgress(user.id, content.id, newStatus);
+
+		// 進捗を更新または作成（upsert）
+		const { error } = await supabase
+			.from("user_progress")
+			.upsert(
+				{
+					user_id: user.id,
+					content_id: content.id,
+					completed: newStatus,
+					completed_at: newStatus ? new Date().toISOString() : null,
+				},
+				{
+					onConflict: "user_id,content_id",
+				},
+			);
+
+		if (error) {
+			console.error("Error updating progress:", error);
+			return;
+		}
+
 		setIsCompleted(newStatus);
 	};
 
-	const handleNext = () => {
+	const handleNext = async () => {
 		if (!content) return;
 
-		// 同じWeek内の次のコンテンツを探す
-		const sameWeekContents = mockContents
-			.filter((c) => c.weekId === content.weekId)
-			.sort((a, b) => a.orderIndex - b.orderIndex);
+		const supabase = createClient();
 
-		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
+		// 同じWeek内のコンテンツを取得
+		const { data: sameWeekContents } = await supabase
+			.from("contents")
+			.select("*")
+			.eq("week_id", content.weekId)
+			.order("order_index", { ascending: true });
+
+		if (!sameWeekContents || sameWeekContents.length === 0) return;
+
+		const currentIndex = sameWeekContents.findIndex(
+			(c) => c.id === content.id,
+		);
+
 		if (currentIndex < sameWeekContents.length - 1) {
+			// 同じWeek内の次のコンテンツへ
 			router.push(`/student/contents/${sameWeekContents[currentIndex + 1].id}`);
 		} else {
 			// 次のWeekの最初のコンテンツへ
-			const currentWeek = mockWeeks.find((w) => w.id === content.weekId);
+			const { data: currentWeek } = await supabase
+				.from("weeks")
+				.select("*")
+				.eq("id", content.weekId)
+				.single();
+
 			if (currentWeek) {
-				const nextWeek = mockWeeks
-					.filter((w) => w.phaseId === currentWeek.phaseId)
-					.sort((a, b) => a.orderIndex - b.orderIndex)
-					.find((w) => w.orderIndex > currentWeek.orderIndex);
+				const { data: weeks } = await supabase
+					.from("weeks")
+					.select("*")
+					.eq("phase_id", currentWeek.phase_id)
+					.order("order_index", { ascending: true });
 
-				if (nextWeek) {
-					const nextContent = mockContents
-						.filter((c) => c.weekId === nextWeek.id)
-						.sort((a, b) => a.orderIndex - b.orderIndex)[0];
+				if (weeks) {
+					const nextWeek = weeks.find(
+						(w) => w.order_index > currentWeek.order_index,
+					);
 
-					if (nextContent) {
-						router.push(`/student/contents/${nextContent.id}`);
+					if (nextWeek) {
+						const { data: nextContents } = await supabase
+							.from("contents")
+							.select("*")
+							.eq("week_id", nextWeek.id)
+							.order("order_index", { ascending: true })
+							.limit(1);
+
+						if (nextContents && nextContents.length > 0) {
+							router.push(`/student/contents/${nextContents[0].id}`);
+						}
 					}
 				}
 			}
 		}
 	};
 
-	const handlePrevious = () => {
+	const handlePrevious = async () => {
 		if (!content) return;
 
-		// 同じWeek内の前のコンテンツを探す
-		const sameWeekContents = mockContents
-			.filter((c) => c.weekId === content.weekId)
-			.sort((a, b) => a.orderIndex - b.orderIndex);
+		const supabase = createClient();
 
-		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
+		// 同じWeek内のコンテンツを取得
+		const { data: sameWeekContents } = await supabase
+			.from("contents")
+			.select("*")
+			.eq("week_id", content.weekId)
+			.order("order_index", { ascending: true });
+
+		if (!sameWeekContents || sameWeekContents.length === 0) return;
+
+		const currentIndex = sameWeekContents.findIndex(
+			(c) => c.id === content.id,
+		);
+
 		if (currentIndex > 0) {
+			// 同じWeek内の前のコンテンツへ
 			router.push(`/student/contents/${sameWeekContents[currentIndex - 1].id}`);
 		} else {
 			// 前のWeekの最後のコンテンツへ
-			const currentWeek = mockWeeks.find((w) => w.id === content.weekId);
+			const { data: currentWeek } = await supabase
+				.from("weeks")
+				.select("*")
+				.eq("id", content.weekId)
+				.single();
+
 			if (currentWeek) {
-				const prevWeek = mockWeeks
-					.filter((w) => w.phaseId === currentWeek.phaseId)
-					.sort((a, b) => b.orderIndex - a.orderIndex)
-					.find((w) => w.orderIndex < currentWeek.orderIndex);
+				const { data: weeks } = await supabase
+					.from("weeks")
+					.select("*")
+					.eq("phase_id", currentWeek.phase_id)
+					.order("order_index", { ascending: true });
 
-				if (prevWeek) {
-					const prevContents = mockContents
-						.filter((c) => c.weekId === prevWeek.id)
-						.sort((a, b) => a.orderIndex - b.orderIndex);
+				if (weeks) {
+					const prevWeek = weeks
+						.filter((w) => w.order_index < currentWeek.order_index)
+						.sort((a, b) => b.order_index - a.order_index)[0];
 
-					const prevContent = prevContents[prevContents.length - 1];
-					if (prevContent) {
-						router.push(`/student/contents/${prevContent.id}`);
+					if (prevWeek) {
+						const { data: prevContents } = await supabase
+							.from("contents")
+							.select("*")
+							.eq("week_id", prevWeek.id)
+							.order("order_index", { ascending: true });
+
+						if (prevContents && prevContents.length > 0) {
+							const prevContent = prevContents[prevContents.length - 1];
+							router.push(`/student/contents/${prevContent.id}`);
+						}
 					}
 				}
 			}
 		}
 	};
 
-	if (!user || !content) {
-		return null;
+	if (isLoading || !user || !content) {
+		return (
+			<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
+				<div className="flex items-center justify-center min-h-[400px]">
+					<div className="text-center">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+						<p className="text-muted-foreground">読み込み中...</p>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	// コンテンツタイプ別のアイコンとラベル
@@ -211,17 +364,17 @@ export default function ContentDetailPage() {
 				{/* コンテンツ本体 */}
 				<Card>
 					<CardContent className="p-6">
-						{content.type === "video" && (
+						{content.type === "video" && content.content && (
 							<YouTubePlayer url={content.content} />
 						)}
 
 						{content.type === "text" && (
-							<MarkdownViewer content={content.content} />
+							<MarkdownViewer content={content.content ?? ""} />
 						)}
 
 						{content.type === "exercise" && (
 							<div className="space-y-6">
-								<MarkdownViewer content={content.content} />
+								<MarkdownViewer content={content.content ?? ""} />
 
 								<div className="border-t pt-6">
 									<h3 className="font-semibold mb-3">課題を提出する</h3>

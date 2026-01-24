@@ -207,7 +207,7 @@ export default function SubmissionDetailPage({
 								{content.content}
 							</div>
 						) : (
-							<MarkdownRenderer content={content.content} />
+							<MarkdownRenderer content={content.content ?? ""} />
 						)}
 					</CardContent>
 				</Card>

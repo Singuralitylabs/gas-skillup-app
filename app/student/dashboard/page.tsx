@@ -14,17 +14,16 @@ import {
 	EmptyAnnouncements,
 	Progress,
 } from "@/components/ui";
-import {
-	getContentsByWeek,
-	getCurrentUser,
-	getLatestAnnouncements,
-	getStoredUserProgress,
-	getWeeksByPhase,
-	mockContents,
-	mockPhases,
-	mockWeeks,
-} from "@/lib/mock";
-import type { AnnouncementResponse, UserResponse } from "@/types";
+import { createClient } from "@/app/_lib/supabase/client";
+import type {
+	Announcement,
+	Content,
+	Phase,
+	Profile,
+	UserProgress,
+	Week,
+} from "@/app/_types";
+import type { AnnouncementResponse, UserResponse } from "@/app/_types";
 import { AnnouncementCard, ProgressCard } from "../_components";
 
 export default function StudentDashboardPage() {
@@ -32,61 +31,146 @@ export default function StudentDashboardPage() {
 	const [user, setUser] = useState<UserResponse | null>(null);
 	const [progressRate, setProgressRate] = useState(0);
 	const [completedContents, setCompletedContents] = useState(0);
+	const [totalContents, setTotalContents] = useState(0);
 	const [announcements, setAnnouncements] = useState<AnnouncementResponse[]>(
 		[],
 	);
 	const [phaseProgress, setPhaseProgress] = useState<
 		{ phaseId: string; title: string; completed: number; total: number }[]
 	>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			router.push("/login");
-			return;
-		}
+		async function loadData() {
+			const supabase = createClient();
 
-		if (!currentUser.approved) {
-			router.push("/pending-approval");
-			return;
-		}
+			// 現在のユーザーを取得
+			const {
+				data: { user: authUser },
+				error: authError,
+			} = await supabase.auth.getUser();
 
-		setUser(currentUser);
+			if (authError || !authUser) {
+				router.push("/login");
+				return;
+			}
 
-		// 進捗データを取得
-		const userProgress = getStoredUserProgress(currentUser.id);
-		const totalContents = mockContents.length;
-		const completed = userProgress.filter((p) => p.completed).length;
-		const rate =
-			totalContents > 0 ? Math.round((completed / totalContents) * 100) : 0;
+			// プロフィール情報を取得
+			const { data: profile, error: profileError } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", authUser.id)
+				.single();
 
-		setCompletedContents(completed);
-		setProgressRate(rate);
+			if (profileError || !profile) {
+				router.push("/login");
+				return;
+			}
 
-		// お知らせを取得
-		setAnnouncements(getLatestAnnouncements(3));
+			if (!profile.approved) {
+				router.push("/pending-approval");
+				return;
+			}
 
-		// Phase 別進捗を計算
-		const phaseProgressData = mockPhases.map((phase) => {
-			const weeks = getWeeksByPhase(phase.id);
-			const phaseContents = weeks.flatMap((week) => getContentsByWeek(week.id));
-			const completedInPhase = phaseContents.filter((content) =>
-				userProgress.some((p) => p.contentId === content.id && p.completed),
-			).length;
-
-			return {
-				phaseId: phase.id,
-				title: phase.title,
-				completed: completedInPhase,
-				total: phaseContents.length,
+			// UserResponse型に変換
+			const userResponse: UserResponse = {
+				id: profile.id,
+				email: profile.email,
+				name: profile.name,
+				role: profile.role,
+				approved: profile.approved,
+				createdAt: profile.created_at,
 			};
-		});
 
-		setPhaseProgress(phaseProgressData);
+			setUser(userResponse);
+
+			// データを並列取得
+			const [
+				phasesResult,
+				weeksResult,
+				contentsResult,
+				progressResult,
+				announcementsResult,
+			] = await Promise.all([
+				supabase.from("phases").select("*").order("order_index", { ascending: true }),
+				supabase.from("weeks").select("*").order("order_index", { ascending: true }),
+				supabase.from("contents").select("*").order("order_index", { ascending: true }),
+				supabase
+					.from("user_progress")
+					.select("*")
+					.eq("user_id", authUser.id)
+					.eq("completed", true),
+				supabase
+					.from("announcements")
+					.select("*")
+					.not("published_at", "is", null)
+					.lte("published_at", new Date().toISOString())
+					.order("published_at", { ascending: false })
+					.limit(3),
+			]);
+
+			const phases = (phasesResult.data as Phase[]) ?? [];
+			const weeks = (weeksResult.data as Week[]) ?? [];
+			const contents = (contentsResult.data as Content[]) ?? [];
+			const userProgress = (progressResult.data as UserProgress[]) ?? [];
+			const announcementsData = (announcementsResult.data as Announcement[]) ?? [];
+
+			// 進捗率を計算
+			const total = contents.length;
+			const completed = userProgress.length;
+			const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+			setTotalContents(total);
+			setCompletedContents(completed);
+			setProgressRate(rate);
+
+			// お知らせを変換
+			const announcementsResponse: AnnouncementResponse[] =
+				announcementsData.map((announcement) => ({
+					id: announcement.id,
+					title: announcement.title,
+					content: announcement.content,
+					publishedAt: announcement.published_at,
+					createdAt: announcement.created_at,
+				}));
+			setAnnouncements(announcementsResponse);
+
+			// Phase 別進捗を計算
+			const phaseProgressData = phases.map((phase) => {
+				const phaseWeeks = weeks.filter((week) => week.phase_id === phase.id);
+				const phaseContents = phaseWeeks.flatMap((week) =>
+					contents.filter((content) => content.week_id === week.id),
+				);
+				const completedInPhase = phaseContents.filter((content) =>
+					userProgress.some((p) => p.content_id === content.id),
+				).length;
+
+				return {
+					phaseId: phase.id,
+					title: phase.title,
+					completed: completedInPhase,
+					total: phaseContents.length,
+				};
+			});
+
+			setPhaseProgress(phaseProgressData);
+			setIsLoading(false);
+		}
+
+		loadData();
 	}, [router]);
 
-	if (!user) {
-		return null;
+	if (isLoading || !user) {
+		return (
+			<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
+				<div className="flex items-center justify-center min-h-[400px]">
+					<div className="text-center">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+						<p className="text-muted-foreground">読み込み中...</p>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -96,14 +180,14 @@ export default function StudentDashboardPage() {
 				<div>
 					<h1 className="text-2xl sm:text-3xl font-bold">ダッシュボード</h1>
 					<p className="text-sm sm:text-base text-muted-foreground">
-						ようこそ、{user.name}さん
+						ようこそ、{user.name ?? "ユーザー"}さん
 					</p>
 				</div>
 
 				{/* Progress Summary */}
 				<div className="grid gap-6 md:grid-cols-2">
 					<ProgressCard
-						totalContents={mockContents.length}
+						totalContents={totalContents}
 						completedContents={completedContents}
 						progressRate={progressRate}
 					/>

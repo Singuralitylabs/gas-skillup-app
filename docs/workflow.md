@@ -208,34 +208,34 @@ W10 ✓ 本番リリース
 ### タスク一覧
 
 **Supabase セットアップ** (2日)
-- [ ] Supabaseプロジェクト作成
-- [ ] データベーススキーマ設計・実装
-- [ ] Row Level Security（RLS）ポリシー設計
-- [ ] 環境変数設定（.env.local）
+- [x] Supabaseプロジェクト作成
+- [x] データベーススキーマ設計・実装
+- [x] Row Level Security（RLS）ポリシー設計
+- [x] 環境変数設定（.env.local）
 
 **データベーススキーマ実装** (3日)
-- [ ] Phase / Week / Content テーブル
-- [ ] User / UserProgress テーブル
-- [ ] Submission / Announcement テーブル
-- [ ] マイグレーション実行
-- [ ] シードデータ投入
+- [x] Phase / Week / Content テーブル
+- [x] User / UserProgress テーブル
+- [x] Submission / Announcement テーブル
+- [x] マイグレーション実行
+- [x] シードデータ投入
 
 **認証機能実装** (3日)
-- [ ] Supabase Auth設定（Google OAuth）
-- [ ] Next.js認証フロー実装
-- [ ] ミドルウェア設定（認証チェック）
-- [ ] セッション管理実装
-- [ ] ログイン・ログアウト機能
+- [x] Supabase Auth設定（Google OAuth）
+- [x] Next.js認証フロー実装
+- [x] ミドルウェア設定（認証チェック）
+- [x] セッション管理実装
+- [x] ログイン・ログアウト機能
 
 **承認フロー実装** (2日)
-- [ ] 承認待ち画面（未承認ユーザー用）
-- [ ] 承認管理画面（運営用）
-- [ ] 承認/却下処理API
-- [ ] アクセス制御（RLS）
+- [x] 承認待ち画面（未承認ユーザー用）
+- [x] 承認管理画面（運営用）
+- [x] 承認/却下処理API（Server Actions）
+- [x] アクセス制御（RLS）
 
 **データ移行** (3日)
-- [ ] モックデータからSupabaseへの切り替え
-- [ ] API層実装（CRUD操作）
+- [x] モックデータからSupabaseへの切り替え
+- [x] Supabaseクエリ関数実装（profiles, contents, progress, submissions, announcements, dashboard）
 - [ ] 状態管理更新（React Query or SWR）
 - [ ] エラーハンドリング実装
 
@@ -590,12 +590,14 @@ gas-skillup-app/
 - [ ] レスポンシブ対応完成
 
 ### Sprint 3（バックエンド統合）
-- [ ] Supabaseプロジェクト作成
-- [ ] DBスキーマ実装
-- [ ] Google OAuth設定
-- [ ] 認証フロー実装
-- [ ] モックからリアルデータへ移行
-- [ ] API層実装
+- [x] Supabaseプロジェクト作成
+- [x] DBスキーマ実装
+- [x] Google OAuth設定
+- [x] 認証フロー実装
+- [x] 承認管理画面（運営用）
+- [x] 承認/却下処理API（Server Actions）
+- [x] モックからリアルデータへ移行（講師用画面完了）
+- [x] Supabaseクエリ関数実装
 
 ### Sprint 4（機能完成）
 - [ ] 課題提出・フィードバック機能

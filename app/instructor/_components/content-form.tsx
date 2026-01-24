@@ -3,8 +3,12 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/app/_components/ui";
-import { getWeeksByPhase, mockPhases, mockWeeks } from "@/app/_lib/mock";
-import type { ContentResponse, ContentType } from "@/types";
+import type { Phase, Week, Content, ContentType } from "@/types/database.types";
+
+// PhaseWithWeeksの型定義
+type PhaseWithWeeks = Phase & {
+	weeks: Week[];
+};
 
 // Markdownエディタを動的インポート（SSR無効化）
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
@@ -17,29 +21,32 @@ const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
 });
 
 export interface ContentFormProps {
-	content?: ContentResponse;
+	content?: Content;
+	phases?: PhaseWithWeeks[];
 	defaultWeekId?: string;
-	onSave: (data: Partial<ContentResponse> & { weekId: string }) => void;
+	onSave: (data: { week_id: string; type: ContentType; title: string; content: string; order_index: number }) => void;
 	onCancel: () => void;
 }
 
 export function ContentForm({
 	content,
+	phases = [],
 	defaultWeekId,
 	onSave,
 	onCancel,
 }: ContentFormProps) {
-	const [weekId, setWeekId] = useState(content?.weekId || defaultWeekId || "");
+	const [weekId, setWeekId] = useState(content?.week_id || defaultWeekId || "");
 	const [type, setType] = useState<ContentType>(content?.type || "video");
 	const [title, setTitle] = useState(content?.title || "");
 	const [contentText, setContentText] = useState(content?.content || "");
 	const [orderIndex, setOrderIndex] = useState(
-		content?.orderIndex?.toString() || "1",
+		content?.order_index?.toString() || "1",
 	);
 
 	// Get week's phase for better UX
-	const selectedWeek = mockWeeks.find((w) => w.id === weekId);
-	const selectedPhase = mockPhases.find((p) => p.id === selectedWeek?.phaseId);
+	const allWeeks = phases.flatMap((p) => p.weeks);
+	const selectedWeek = allWeeks.find((w) => w.id === weekId);
+	const selectedPhase = phases.find((p) => p.id === selectedWeek?.phase_id);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -77,11 +84,11 @@ export function ContentForm({
 		}
 
 		onSave({
-			weekId,
+			week_id: weekId,
 			type,
 			title: title.trim(),
 			content: contentText.trim(),
-			orderIndex: orderNum,
+			order_index: orderNum,
 		});
 	};
 
@@ -124,11 +131,11 @@ export function ContentForm({
 					required
 				>
 					<option value="">選択してください</option>
-					{mockPhases
-						.sort((a, b) => a.orderIndex - b.orderIndex)
+					{phases
+						.sort((a, b) => a.order_index - b.order_index)
 						.map((phase) => {
-							const weeks = getWeeksByPhase(phase.id).sort(
-								(a, b) => a.orderIndex - b.orderIndex,
+							const weeks = phase.weeks.sort(
+								(a, b) => a.order_index - b.order_index,
 							);
 							return (
 								<optgroup key={phase.id} label={phase.title}>

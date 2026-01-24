@@ -238,7 +238,7 @@ export function getStudentProgressRates(): Array<{
 
 			return {
 				userId: student.id,
-				userName: student.name,
+				userName: student.name ?? "Unknown",
 				progressRate,
 				completedCount,
 				totalCount: totalContents,

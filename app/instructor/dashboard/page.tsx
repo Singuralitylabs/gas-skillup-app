@@ -4,7 +4,7 @@ import {
 	getProgressDistribution,
 	getRecentPendingSubmissions,
 	getSubmissionTrend,
-} from "@/lib/mock/stats";
+} from "@/app/_lib/supabase/queries";
 import { formatDate } from "@/lib/utils/format";
 import {
 	KpiCard,
@@ -12,12 +12,15 @@ import {
 	SubmissionTrendChart,
 } from "../_components";
 
-export default function InstructorDashboardPage() {
-	// 統計データを取得
-	const stats = getDashboardStats();
-	const progressDistribution = getProgressDistribution();
-	const submissionTrend = getSubmissionTrend();
-	const recentSubmissions = getRecentPendingSubmissions(5);
+export default async function InstructorDashboardPage() {
+	// 統計データを並列取得
+	const [stats, progressDistribution, submissionTrend, recentSubmissions] =
+		await Promise.all([
+			getDashboardStats(),
+			getProgressDistribution(),
+			getSubmissionTrend(),
+			getRecentPendingSubmissions(5),
+		]);
 
 	return (
 		<div className="space-y-8">

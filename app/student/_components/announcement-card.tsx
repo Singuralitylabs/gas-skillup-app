@@ -15,7 +15,7 @@ export function AnnouncementCard({ announcement }: AnnouncementCardProps) {
 						{announcement.title}
 					</CardTitle>
 					<span className="text-xs text-muted-foreground sm:whitespace-nowrap">
-						{formatDate(announcement.publishedAt)}
+						{announcement.publishedAt ? formatDate(announcement.publishedAt) : "未公開"}
 					</span>
 				</div>
 			</CardHeader>

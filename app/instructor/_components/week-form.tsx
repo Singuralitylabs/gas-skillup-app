@@ -2,27 +2,28 @@
 
 import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/app/_components/ui";
-import { mockPhases } from "@/app/_lib/mock";
-import type { WeekResponse } from "@/types";
+import type { Phase, Week } from "@/types/database.types";
 
 export interface WeekFormProps {
-	week?: WeekResponse;
+	week?: Week;
+	phases?: Phase[];
 	defaultPhaseId?: string;
-	onSave: (data: Partial<WeekResponse> & { phaseId: string }) => void;
+	onSave: (data: { phase_id: string; title: string; description?: string; order_index: number }) => void;
 	onCancel: () => void;
 }
 
 export function WeekForm({
 	week,
+	phases = [],
 	defaultPhaseId,
 	onSave,
 	onCancel,
 }: WeekFormProps) {
-	const [phaseId, setPhaseId] = useState(week?.phaseId || defaultPhaseId || "");
+	const [phaseId, setPhaseId] = useState(week?.phase_id || defaultPhaseId || "");
 	const [title, setTitle] = useState(week?.title || "");
 	const [description, setDescription] = useState(week?.description || "");
 	const [orderIndex, setOrderIndex] = useState(
-		week?.orderIndex?.toString() || "1",
+		week?.order_index?.toString() || "1",
 	);
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -45,10 +46,10 @@ export function WeekForm({
 		}
 
 		onSave({
-			phaseId,
+			phase_id: phaseId,
 			title: title.trim(),
 			description: description.trim() || undefined,
-			orderIndex: orderNum,
+			order_index: orderNum,
 		});
 	};
 
@@ -65,8 +66,8 @@ export function WeekForm({
 					required
 				>
 					<option value="">選択してください</option>
-					{mockPhases
-						.sort((a, b) => a.orderIndex - b.orderIndex)
+					{phases
+						.sort((a, b) => a.order_index - b.order_index)
 						.map((phase) => (
 							<option key={phase.id} value={phase.id}>
 								{phase.title}

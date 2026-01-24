@@ -3,44 +3,162 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
-import {
-	getCurrentUser,
-	getStoredUserProgress,
-	getWeeksByPhase,
-	mockContents,
-	mockPhases,
-} from "@/lib/mock";
-import type { UserResponse } from "@/types";
+import { createClient } from "@/app/_lib/supabase/client";
+import type {
+	Content,
+	Phase,
+	UserProgress,
+	Week,
+} from "@/app/_types";
+import type {
+	ContentResponse,
+	PhaseResponse,
+	UserProgressResponse,
+	UserResponse,
+	WeekResponse,
+} from "@/app/_types";
 import { PhaseSection } from "../_components";
 
 export default function ContentsPage() {
 	const router = useRouter();
 	const [user, setUser] = useState<UserResponse | null>(null);
+	const [phases, setPhases] = useState<PhaseResponse[]>([]);
+	const [weeks, setWeeks] = useState<WeekResponse[]>([]);
+	const [contents, setContents] = useState<ContentResponse[]>([]);
+	const [userProgress, setUserProgress] = useState<UserProgressResponse[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			router.push("/login");
-			return;
+		async function loadData() {
+			const supabase = createClient();
+
+			// 現在のユーザーを取得
+			const {
+				data: { user: authUser },
+				error: authError,
+			} = await supabase.auth.getUser();
+
+			if (authError || !authUser) {
+				router.push("/login");
+				return;
+			}
+
+			// プロフィール情報を取得
+			const { data: profile, error: profileError } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", authUser.id)
+				.single();
+
+			if (profileError || !profile) {
+				router.push("/login");
+				return;
+			}
+
+			if (!profile.approved) {
+				router.push("/pending-approval");
+				return;
+			}
+
+			// UserResponse型に変換
+			const userResponse: UserResponse = {
+				id: profile.id,
+				email: profile.email,
+				name: profile.name,
+				role: profile.role,
+				approved: profile.approved,
+				createdAt: profile.created_at,
+			};
+
+			setUser(userResponse);
+
+			// データを並列取得
+			const [
+				phasesResult,
+				weeksResult,
+				contentsResult,
+				progressResult,
+			] = await Promise.all([
+				supabase.from("phases").select("*").order("order_index", { ascending: true }),
+				supabase.from("weeks").select("*").order("order_index", { ascending: true }),
+				supabase.from("contents").select("*").order("order_index", { ascending: true }),
+				supabase
+					.from("user_progress")
+					.select("*")
+					.eq("user_id", authUser.id),
+			]);
+
+			const phasesData = (phasesResult.data as Phase[]) ?? [];
+			const weeksData = (weeksResult.data as Week[]) ?? [];
+			const contentsData = (contentsResult.data as Content[]) ?? [];
+			const progressData = (progressResult.data as UserProgress[]) ?? [];
+
+			// PhaseResponse型に変換
+			const phasesResponse: PhaseResponse[] = phasesData.map((phase) => ({
+				id: phase.id,
+				title: phase.title,
+				description: phase.description,
+				orderIndex: phase.order_index,
+				createdAt: phase.created_at,
+			}));
+
+			// WeekResponse型に変換
+			const weeksResponse: WeekResponse[] = weeksData.map((week) => ({
+				id: week.id,
+				phaseId: week.phase_id,
+				title: week.title,
+				description: week.description,
+				orderIndex: week.order_index,
+				createdAt: week.created_at,
+			}));
+
+			// ContentResponse型に変換
+			const contentsResponse: ContentResponse[] = contentsData.map((content) => ({
+				id: content.id,
+				weekId: content.week_id,
+				type: content.type,
+				title: content.title,
+				content: content.content,
+				orderIndex: content.order_index,
+				createdAt: content.created_at,
+			}));
+
+			// UserProgressResponse型に変換
+			const progressResponse: UserProgressResponse[] = progressData.map(
+				(progress) => ({
+					id: progress.id,
+					userId: progress.user_id,
+					contentId: progress.content_id,
+					completed: progress.completed,
+					completedAt: progress.completed_at,
+				}),
+			);
+
+			setPhases(phasesResponse);
+			setWeeks(weeksResponse);
+			setContents(contentsResponse);
+			setUserProgress(progressResponse);
+			setIsLoading(false);
 		}
 
-		if (!currentUser.approved) {
-			router.push("/pending-approval");
-			return;
-		}
-
-		setUser(currentUser);
+		loadData();
 	}, [router]);
 
-	if (!user) {
-		return null;
+	if (isLoading || !user) {
+		return (
+			<div className="container py-4 px-4 sm:py-6 sm:px-6 lg:py-8 lg:px-8">
+				<div className="flex items-center justify-center min-h-[400px]">
+					<div className="text-center">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+						<p className="text-muted-foreground">読み込み中...</p>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
-	// ユーザーの進捗データを取得
-	const userProgress = getStoredUserProgress(user.id);
-
 	// 全体の進捗統計
-	const totalContents = mockContents.length;
+	const totalContents = contents.length;
 	const completedContents = userProgress.filter((p) => p.completed).length;
 	const progressRate =
 		totalContents > 0
@@ -91,10 +209,12 @@ export default function ContentsPage() {
 
 				{/* Phase リスト */}
 				<div className="space-y-4">
-					{mockPhases
+					{phases
 						.sort((a, b) => a.orderIndex - b.orderIndex)
 						.map((phase, index) => {
-							const weeks = getWeeksByPhase(phase.id);
+							const phaseWeeks = weeks.filter(
+								(week) => week.phaseId === phase.id,
+							);
 
 							// 最初のPhaseをデフォルトで開く
 							const defaultOpen = index === 0;
@@ -103,8 +223,8 @@ export default function ContentsPage() {
 								<PhaseSection
 									key={phase.id}
 									phase={phase}
-									weeks={weeks}
-									allContents={mockContents}
+									weeks={phaseWeeks}
+									allContents={contents}
 									userProgress={userProgress}
 									defaultOpen={defaultOpen}
 								/>

@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Button, Input, Textarea } from "@/app/_components/ui";
-import type { PhaseResponse } from "@/types";
+import type { Phase } from "@/types/database.types";
 
 export interface PhaseFormProps {
-	phase?: PhaseResponse;
-	onSave: (data: Partial<PhaseResponse>) => void;
+	phase?: Phase;
+	onSave: (data: { title: string; description?: string; order_index: number }) => void;
 	onCancel: () => void;
 }
 
@@ -14,7 +14,7 @@ export function PhaseForm({ phase, onSave, onCancel }: PhaseFormProps) {
 	const [title, setTitle] = useState(phase?.title || "");
 	const [description, setDescription] = useState(phase?.description || "");
 	const [orderIndex, setOrderIndex] = useState(
-		phase?.orderIndex?.toString() || "1",
+		phase?.order_index?.toString() || "1",
 	);
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +34,7 @@ export function PhaseForm({ phase, onSave, onCancel }: PhaseFormProps) {
 		onSave({
 			title: title.trim(),
 			description: description.trim() || undefined,
-			orderIndex: orderNum,
+			order_index: orderNum,
 		});
 	};
 
