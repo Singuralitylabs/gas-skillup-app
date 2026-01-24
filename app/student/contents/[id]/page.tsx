@@ -3,18 +3,16 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, CardContent } from "@/components/ui";
 import { createClient } from "@/app/_lib/supabase/client";
 import type {
 	Content,
+	ContentResponse,
 	Phase,
 	UserProgress,
+	UserResponse,
 	Week,
 } from "@/app/_types";
-import type {
-	ContentResponse,
-	UserResponse,
-} from "@/app/_types";
+import { Badge, Button, Card, CardContent } from "@/components/ui";
 import { MarkdownViewer, YouTubePlayer } from "../../_components";
 
 export default function ContentDetailPage() {
@@ -149,19 +147,17 @@ export default function ContentDetailPage() {
 		const newStatus = !isCompleted;
 
 		// 進捗を更新または作成（upsert）
-		const { error } = await supabase
-			.from("user_progress")
-			.upsert(
-				{
-					user_id: user.id,
-					content_id: content.id,
-					completed: newStatus,
-					completed_at: newStatus ? new Date().toISOString() : null,
-				},
-				{
-					onConflict: "user_id,content_id",
-				},
-			);
+		const { error } = await supabase.from("user_progress").upsert(
+			{
+				user_id: user.id,
+				content_id: content.id,
+				completed: newStatus,
+				completed_at: newStatus ? new Date().toISOString() : null,
+			},
+			{
+				onConflict: "user_id,content_id",
+			},
+		);
 
 		if (error) {
 			console.error("Error updating progress:", error);
@@ -185,9 +181,7 @@ export default function ContentDetailPage() {
 
 		if (!sameWeekContents || sameWeekContents.length === 0) return;
 
-		const currentIndex = sameWeekContents.findIndex(
-			(c) => c.id === content.id,
-		);
+		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
 
 		if (currentIndex < sameWeekContents.length - 1) {
 			// 同じWeek内の次のコンテンツへ
@@ -243,9 +237,7 @@ export default function ContentDetailPage() {
 
 		if (!sameWeekContents || sameWeekContents.length === 0) return;
 
-		const currentIndex = sameWeekContents.findIndex(
-			(c) => c.id === content.id,
-		);
+		const currentIndex = sameWeekContents.findIndex((c) => c.id === content.id);
 
 		if (currentIndex > 0) {
 			// 同じWeek内の前のコンテンツへ

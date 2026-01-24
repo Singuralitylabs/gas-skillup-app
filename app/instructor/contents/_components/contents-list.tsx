@@ -9,7 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/app/_components/ui";
-import type { Phase, Week, Content } from "@/types/database.types";
+import type { Content, Phase, Week } from "@/types/database.types";
 import { ContentForm } from "../../_components/content-form";
 import { PhaseForm } from "../../_components/phase-form";
 import { WeekForm } from "../../_components/week-form";

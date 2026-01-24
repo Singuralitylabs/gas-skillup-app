@@ -2,21 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui";
 import { createClient } from "@/app/_lib/supabase/client";
 import type {
 	Content,
-	Phase,
-	UserProgress,
-	Week,
-} from "@/app/_types";
-import type {
 	ContentResponse,
+	Phase,
 	PhaseResponse,
+	UserProgress,
 	UserProgressResponse,
 	UserResponse,
+	Week,
 	WeekResponse,
 } from "@/app/_types";
+import { Button } from "@/components/ui";
 import { PhaseSection } from "../_components";
 
 export default function ContentsPage() {
@@ -73,20 +71,22 @@ export default function ContentsPage() {
 			setUser(userResponse);
 
 			// データを並列取得
-			const [
-				phasesResult,
-				weeksResult,
-				contentsResult,
-				progressResult,
-			] = await Promise.all([
-				supabase.from("phases").select("*").order("order_index", { ascending: true }),
-				supabase.from("weeks").select("*").order("order_index", { ascending: true }),
-				supabase.from("contents").select("*").order("order_index", { ascending: true }),
-				supabase
-					.from("user_progress")
-					.select("*")
-					.eq("user_id", authUser.id),
-			]);
+			const [phasesResult, weeksResult, contentsResult, progressResult] =
+				await Promise.all([
+					supabase
+						.from("phases")
+						.select("*")
+						.order("order_index", { ascending: true }),
+					supabase
+						.from("weeks")
+						.select("*")
+						.order("order_index", { ascending: true }),
+					supabase
+						.from("contents")
+						.select("*")
+						.order("order_index", { ascending: true }),
+					supabase.from("user_progress").select("*").eq("user_id", authUser.id),
+				]);
 
 			const phasesData = (phasesResult.data as Phase[]) ?? [];
 			const weeksData = (weeksResult.data as Week[]) ?? [];
@@ -113,15 +113,17 @@ export default function ContentsPage() {
 			}));
 
 			// ContentResponse型に変換
-			const contentsResponse: ContentResponse[] = contentsData.map((content) => ({
-				id: content.id,
-				weekId: content.week_id,
-				type: content.type,
-				title: content.title,
-				content: content.content,
-				orderIndex: content.order_index,
-				createdAt: content.created_at,
-			}));
+			const contentsResponse: ContentResponse[] = contentsData.map(
+				(content) => ({
+					id: content.id,
+					weekId: content.week_id,
+					type: content.type,
+					title: content.title,
+					content: content.content,
+					orderIndex: content.order_index,
+					createdAt: content.created_at,
+				}),
+			);
 
 			// UserProgressResponse型に変換
 			const progressResponse: UserProgressResponse[] = progressData.map(

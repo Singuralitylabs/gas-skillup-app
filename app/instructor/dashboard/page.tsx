@@ -1,10 +1,10 @@
-import { Badge } from "@/components/ui";
 import {
 	getDashboardStats,
 	getProgressDistribution,
 	getRecentPendingSubmissions,
 	getSubmissionTrend,
 } from "@/app/_lib/supabase/queries";
+import { Badge } from "@/components/ui";
 import { formatDate } from "@/lib/utils/format";
 import {
 	KpiCard,

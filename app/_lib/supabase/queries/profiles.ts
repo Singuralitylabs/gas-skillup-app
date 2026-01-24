@@ -1,5 +1,5 @@
-import { createClient } from "../server";
 import type { Profile } from "@/types/database.types";
+import { createClient } from "../server";
 
 /**
  * 全ユーザーを取得

@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/app/_components/ui";
-import type { Phase, Week, Content, ContentType } from "@/types/database.types";
+import type { Content, ContentType, Phase, Week } from "@/types/database.types";
 
 // PhaseWithWeeksの型定義
 type PhaseWithWeeks = Phase & {
@@ -24,7 +24,13 @@ export interface ContentFormProps {
 	content?: Content;
 	phases?: PhaseWithWeeks[];
 	defaultWeekId?: string;
-	onSave: (data: { week_id: string; type: ContentType; title: string; content: string; order_index: number }) => void;
+	onSave: (data: {
+		week_id: string;
+		type: ContentType;
+		title: string;
+		content: string;
+		order_index: number;
+	}) => void;
 	onCancel: () => void;
 }
 

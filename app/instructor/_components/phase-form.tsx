@@ -6,7 +6,11 @@ import type { Phase } from "@/types/database.types";
 
 export interface PhaseFormProps {
 	phase?: Phase;
-	onSave: (data: { title: string; description?: string; order_index: number }) => void;
+	onSave: (data: {
+		title: string;
+		description?: string;
+		order_index: number;
+	}) => void;
 	onCancel: () => void;
 }
 

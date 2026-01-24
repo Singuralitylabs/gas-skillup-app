@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import type { SubmissionWithDetails } from "@/app/_lib/supabase/queries/submissions";
 import { Badge, Input, Select } from "@/components/ui";
 import { formatDate } from "@/lib/utils/format";
-import type { SubmissionWithDetails } from "@/app/_lib/supabase/queries/submissions";
 
 type FeedbackFilter = "all" | "pending" | "reviewed";
 type SortKey = "createdAt" | "student" | "content";

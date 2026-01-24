@@ -3,6 +3,17 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createClient } from "@/app/_lib/supabase/client";
+import type {
+	Announcement,
+	AnnouncementResponse,
+	Content,
+	Phase,
+	Profile,
+	UserProgress,
+	UserResponse,
+	Week,
+} from "@/app/_types";
 import {
 	Badge,
 	Button,
@@ -14,16 +25,6 @@ import {
 	EmptyAnnouncements,
 	Progress,
 } from "@/components/ui";
-import { createClient } from "@/app/_lib/supabase/client";
-import type {
-	Announcement,
-	Content,
-	Phase,
-	Profile,
-	UserProgress,
-	Week,
-} from "@/app/_types";
-import type { AnnouncementResponse, UserResponse } from "@/app/_types";
 import { AnnouncementCard, ProgressCard } from "../_components";
 
 export default function StudentDashboardPage() {
@@ -92,9 +93,18 @@ export default function StudentDashboardPage() {
 				progressResult,
 				announcementsResult,
 			] = await Promise.all([
-				supabase.from("phases").select("*").order("order_index", { ascending: true }),
-				supabase.from("weeks").select("*").order("order_index", { ascending: true }),
-				supabase.from("contents").select("*").order("order_index", { ascending: true }),
+				supabase
+					.from("phases")
+					.select("*")
+					.order("order_index", { ascending: true }),
+				supabase
+					.from("weeks")
+					.select("*")
+					.order("order_index", { ascending: true }),
+				supabase
+					.from("contents")
+					.select("*")
+					.order("order_index", { ascending: true }),
 				supabase
 					.from("user_progress")
 					.select("*")
@@ -113,7 +123,8 @@ export default function StudentDashboardPage() {
 			const weeks = (weeksResult.data as Week[]) ?? [];
 			const contents = (contentsResult.data as Content[]) ?? [];
 			const userProgress = (progressResult.data as UserProgress[]) ?? [];
-			const announcementsData = (announcementsResult.data as Announcement[]) ?? [];
+			const announcementsData =
+				(announcementsResult.data as Announcement[]) ?? [];
 
 			// 進捗率を計算
 			const total = contents.length;

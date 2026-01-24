@@ -73,9 +73,13 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 		// 進捗統計
 		getProgressStats(supabase),
 		// コンテンツ数
-		supabase.from("contents").select("*", { count: "exact", head: true }),
+		supabase
+			.from("contents")
+			.select("*", { count: "exact", head: true }),
 		// お知らせ数
-		supabase.from("announcements").select("*", { count: "exact", head: true }),
+		supabase
+			.from("announcements")
+			.select("*", { count: "exact", head: true }),
 	]);
 
 	return {

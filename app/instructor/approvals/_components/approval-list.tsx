@@ -59,7 +59,9 @@ export function ApprovalList({ pendingUsers }: Props) {
 
 	// 個別却下
 	const handleReject = (userId: string) => {
-		if (!confirm("このユーザーの登録を却下しますか？この操作は取り消せません。")) {
+		if (
+			!confirm("このユーザーの登録を却下しますか？この操作は取り消せません。")
+		) {
 			return;
 		}
 		setProcessingUserId(userId);
@@ -113,11 +115,7 @@ export function ApprovalList({ pendingUsers }: Props) {
 						<span className="text-sm text-muted-foreground">
 							{selectedUsers.length}件選択中
 						</span>
-						<Button
-							onClick={handleBulkApprove}
-							disabled={isPending}
-							size="sm"
-						>
+						<Button onClick={handleBulkApprove} disabled={isPending} size="sm">
 							一括承認
 						</Button>
 					</div>
@@ -141,12 +139,16 @@ export function ApprovalList({ pendingUsers }: Props) {
 										className="h-4 w-4 rounded border-border"
 									/>
 								</th>
-								<th className="p-4 text-left text-sm font-medium">ユーザー名</th>
+								<th className="p-4 text-left text-sm font-medium">
+									ユーザー名
+								</th>
 								<th className="p-4 text-left text-sm font-medium">
 									メールアドレス
 								</th>
 								<th className="p-4 text-left text-sm font-medium">登録日時</th>
-								<th className="p-4 text-left text-sm font-medium">ステータス</th>
+								<th className="p-4 text-left text-sm font-medium">
+									ステータス
+								</th>
 								<th className="p-4 text-right text-sm font-medium">操作</th>
 							</tr>
 						</thead>

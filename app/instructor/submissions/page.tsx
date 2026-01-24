@@ -1,6 +1,6 @@
 import {
-	getSubmissionsWithDetails,
 	getSubmissionStats,
+	getSubmissionsWithDetails,
 } from "@/app/_lib/supabase/queries";
 import { SubmissionsList } from "./_components/submissions-list";
 

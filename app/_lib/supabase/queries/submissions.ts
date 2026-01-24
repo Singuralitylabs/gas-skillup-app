@@ -1,5 +1,5 @@
+import type { Content, Profile, Submission } from "@/types/database.types";
 import { createClient } from "../server";
-import type { Submission, Profile, Content } from "@/types/database.types";
 
 /**
  * 全提出物を取得
@@ -64,7 +64,9 @@ export async function getSubmissionsByContentId(
 /**
  * IDで提出物を取得
  */
-export async function getSubmissionById(id: string): Promise<Submission | null> {
+export async function getSubmissionById(
+	id: string,
+): Promise<Submission | null> {
 	const supabase = await createClient();
 	const { data, error } = await supabase
 		.from("submissions")
@@ -182,9 +184,7 @@ export async function getSubmissionsWithDetails(options?: {
 	]);
 
 	const usersMap = new Map(usersResult.data?.map((u) => [u.id, u]) ?? []);
-	const contentsMap = new Map(
-		contentsResult.data?.map((c) => [c.id, c]) ?? [],
-	);
+	const contentsMap = new Map(contentsResult.data?.map((c) => [c.id, c]) ?? []);
 
 	return submissions
 		.map((submission) => {

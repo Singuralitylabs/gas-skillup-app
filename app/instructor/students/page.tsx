@@ -1,7 +1,7 @@
 import {
-	getStudents,
-	getProfileStats,
 	calculateProgressRates,
+	getProfileStats,
+	getStudents,
 } from "@/app/_lib/supabase/queries";
 import { StudentsList } from "./_components/students-list";
 

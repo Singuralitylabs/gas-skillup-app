@@ -1,5 +1,5 @@
-import { createClient } from "../server";
 import type { UserProgress } from "@/types/database.types";
+import { createClient } from "../server";
 
 /**
  * ユーザーIDで進捗を取得
@@ -52,7 +52,9 @@ export async function getProgressByUserAndContent(
 /**
  * ユーザーの完了済みコンテンツIDを取得
  */
-export async function getCompletedContentIds(userId: string): Promise<string[]> {
+export async function getCompletedContentIds(
+	userId: string,
+): Promise<string[]> {
 	const supabase = await createClient();
 	const { data, error } = await supabase
 		.from("user_progress")

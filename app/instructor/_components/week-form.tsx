@@ -8,7 +8,12 @@ export interface WeekFormProps {
 	week?: Week;
 	phases?: Phase[];
 	defaultPhaseId?: string;
-	onSave: (data: { phase_id: string; title: string; description?: string; order_index: number }) => void;
+	onSave: (data: {
+		phase_id: string;
+		title: string;
+		description?: string;
+		order_index: number;
+	}) => void;
 	onCancel: () => void;
 }
 
@@ -19,7 +24,9 @@ export function WeekForm({
 	onSave,
 	onCancel,
 }: WeekFormProps) {
-	const [phaseId, setPhaseId] = useState(week?.phase_id || defaultPhaseId || "");
+	const [phaseId, setPhaseId] = useState(
+		week?.phase_id || defaultPhaseId || "",
+	);
 	const [title, setTitle] = useState(week?.title || "");
 	const [description, setDescription] = useState(week?.description || "");
 	const [orderIndex, setOrderIndex] = useState(
