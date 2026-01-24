@@ -506,10 +506,12 @@ export function calculateProgressRate(userId: string): number {
  */
 export function getLatestAnnouncements(limit = 5): AnnouncementResponse[] {
 	return mockAnnouncements
-		.sort(
-			(a, b) =>
-				new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-		)
+		.filter((a) => a.publishedAt !== null)
+		.sort((a, b) => {
+			const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+			const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+			return dateB - dateA;
+		})
 		.slice(0, limit);
 }
 

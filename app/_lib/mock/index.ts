@@ -22,7 +22,20 @@ export {
 	mockUsers,
 	mockWeeks,
 } from "./data";
+export type {
+	DashboardStats,
+	ProgressDistribution,
+	SubmissionTrend,
+} from "./stats";
 
+// 統計計算関数
+export {
+	getDashboardStats,
+	getProgressDistribution,
+	getRecentPendingSubmissions,
+	getStudentProgressRates,
+	getSubmissionTrend,
+} from "./stats";
 // ローカルストレージ管理
 export {
 	clearStorage,

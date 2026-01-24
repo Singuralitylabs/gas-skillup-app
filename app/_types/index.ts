@@ -6,20 +6,20 @@
 import type { Database } from "./database.types";
 
 // ============================================
-// Enum Types
+// Enum Types (Supabaseスキーマと同期)
 // ============================================
 
-export type UserRole = "student" | "instructor" | "admin";
-export type ContentType = "video" | "text" | "exercise";
-export type SubmissionType = "code" | "url";
+export type UserRole = Database["public"]["Enums"]["user_role"];
+export type ContentType = Database["public"]["Enums"]["content_type"];
+export type SubmissionType = Database["public"]["Enums"]["submission_type"];
 
 // ============================================
 // Database Table Types (snake_case - Supabaseから取得)
 // ============================================
 
-export type User = Database["public"]["Tables"]["users"]["Row"];
-export type UserInsert = Database["public"]["Tables"]["users"]["Insert"];
-export type UserUpdate = Database["public"]["Tables"]["users"]["Update"];
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
+export type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 
 export type Phase = Database["public"]["Tables"]["phases"]["Row"];
 export type PhaseInsert = Database["public"]["Tables"]["phases"]["Insert"];
@@ -62,7 +62,7 @@ export type AnnouncementUpdate =
 export type UserResponse = {
 	id: string;
 	email: string;
-	name: string;
+	name: string | null;
 	role: UserRole;
 	approved: boolean;
 	createdAt: string;
@@ -99,7 +99,7 @@ export type ContentResponse = {
 	weekId: string;
 	type: ContentType;
 	title: string;
-	content: string;
+	content: string | null;
 	orderIndex: number;
 	createdAt: string;
 };
@@ -136,7 +136,7 @@ export type AnnouncementResponse = {
 	id: string;
 	title: string;
 	content: string;
-	publishedAt: string;
+	publishedAt: string | null;
 	createdAt: string;
 };
 
@@ -376,3 +376,14 @@ export type CreateFeedbackResponse = {
 	success: boolean;
 	submission: SubmissionResponse;
 };
+
+// ============================================
+// 後方互換性のためのエイリアス（徐々に廃止予定）
+// ============================================
+
+/** @deprecated Use Profile instead */
+export type User = Profile;
+/** @deprecated Use ProfileInsert instead */
+export type UserInsert = ProfileInsert;
+/** @deprecated Use ProfileUpdate instead */
+export type UserUpdate = ProfileUpdate;

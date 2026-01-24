@@ -1,7 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import type { Database } from "@/app/_types/database.types";
 import {
 	Button,
 	Card,
@@ -10,90 +12,54 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
-import {
-	initializeStorage,
-	mockSubmissions,
-	mockUserProgress,
-	mockUsers,
-	setCurrentUser,
-} from "@/lib/mock";
 
-export default function LoginPage() {
-	const router = useRouter();
+function LoginForm() {
+	const searchParams = useSearchParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
 
+	// URL パラメータからエラーメッセージを取得
+	useEffect(() => {
+		const errorParam = searchParams.get("error");
+		if (errorParam === "auth_failed") {
+			setError("認証に失敗しました。もう一度お試しください。");
+		}
+	}, [searchParams]);
+
 	/**
-	 * Google OAuth認証（モック実装）
-	 * Sprint 1: 実際のGoogle OAuthではなくモック認証
-	 * Sprint 3: Supabase AuthのGoogle OAuth統合に置き換え予定
+	 * Google OAuth認証
+	 * Supabase Auth を使用して Google 認証を行う
 	 */
 	const handleGoogleLogin = async () => {
 		setError("");
 		setIsLoading(true);
 
 		try {
-			// モック認証: デフォルトで承認済み受講生1としてログイン
-			// 実際のGoogle OAuth実装時は、Supabase Auth経由でGoogle認証を行う
-			const user = mockUsers.find((u) => u.id === "user-1");
+			const supabase = createBrowserClient<Database>(
+				process.env.NEXT_PUBLIC_SUPABASE_URL!,
+				process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+			);
 
-			if (!user) {
-				setError("認証に失敗しました");
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/auth/callback`,
+					queryParams: {
+						access_type: "offline",
+						prompt: "consent",
+					},
+				},
+			});
+
+			if (error) {
+				setError(error.message);
 				setIsLoading(false);
-				return;
 			}
-
-			// ローカルストレージを初期化（モックデータをセット）
-			initializeStorage(mockUserProgress, mockSubmissions);
-
-			// ユーザーをログイン状態に設定
-			setCurrentUser(user);
-
-			// わずかな遅延を追加して認証プロセスをシミュレート
-			await new Promise((resolve) => setTimeout(resolve, 800));
-
-			// ロールに応じてリダイレクト
-			if (user.role === "instructor") {
-				router.push("/instructor-dashboard");
-			} else if (user.approved) {
-				router.push("/student-dashboard");
-			} else {
-				router.push("/pending-approval");
-			}
+			// 成功時はGoogle認証ページにリダイレクトされるので、
+			// ここでの処理は不要
 		} catch {
 			setError("認証中にエラーが発生しました");
 			setIsLoading(false);
-		}
-	};
-
-	/**
-	 * デモ用: 特定のユーザーとしてログイン
-	 */
-	const handleDemoLogin = async (userId: string) => {
-		setError("");
-		setIsLoading(true);
-
-		const user = mockUsers.find((u) => u.id === userId);
-
-		if (!user) {
-			setError("ユーザーが見つかりません");
-			setIsLoading(false);
-			return;
-		}
-
-		// ローカルストレージを初期化
-		initializeStorage(mockUserProgress, mockSubmissions);
-		setCurrentUser(user);
-
-		await new Promise((resolve) => setTimeout(resolve, 500));
-
-		// ロールに応じてリダイレクト
-		if (user.role === "instructor") {
-			router.push("/instructor-dashboard");
-		} else if (user.approved) {
-			router.push("/student-dashboard");
-		} else {
-			router.push("/pending-approval");
 		}
 	};
 
@@ -145,82 +111,25 @@ export default function LoginPage() {
 						{isLoading ? "認証中..." : "Googleでログイン"}
 					</Button>
 
-					<div className="relative">
-						<div className="absolute inset-0 flex items-center">
-							<span className="w-full border-t" />
-						</div>
-						<div className="relative flex justify-center text-xs uppercase">
-							<span className="bg-background px-2 text-muted-foreground">
-								または
-							</span>
-						</div>
-					</div>
-
 					<p className="text-xs text-center text-muted-foreground">
-						※ Sprint 1 モック実装: 実際のGoogle OAuth認証はSprint 3で実装予定
+						※ Googleアカウントで認証後、講師による承認が必要です
 					</p>
 				</CardContent>
 			</Card>
-
-			{/* デモ用: 異なるユーザーロールでログイン */}
-			<Card>
-				<CardHeader>
-					<CardTitle className="text-lg">デモ用ログイン</CardTitle>
-					<CardDescription>
-						開発用: 異なるユーザーロールでログインできます
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-2">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => handleDemoLogin("user-1")}
-						className="w-full justify-start"
-						disabled={isLoading}
-					>
-						<span className="font-medium">承認済み受講生1:</span>
-						<span className="ml-2 text-muted-foreground">
-							student1@example.com
-						</span>
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => handleDemoLogin("user-2")}
-						className="w-full justify-start"
-						disabled={isLoading}
-					>
-						<span className="font-medium">承認済み受講生2:</span>
-						<span className="ml-2 text-muted-foreground">
-							student2@example.com
-						</span>
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => handleDemoLogin("user-3")}
-						className="w-full justify-start"
-						disabled={isLoading}
-					>
-						<span className="font-medium">未承認受講生:</span>
-						<span className="ml-2 text-muted-foreground">
-							student3@example.com
-						</span>
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => handleDemoLogin("user-4")}
-						className="w-full justify-start"
-						disabled={isLoading}
-					>
-						<span className="font-medium">講師:</span>
-						<span className="ml-2 text-muted-foreground">
-							instructor@example.com
-						</span>
-					</Button>
-				</CardContent>
-			</Card>
 		</div>
+	);
+}
+
+export default function LoginPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex items-center justify-center min-h-[200px]">
+					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
+				</div>
+			}
+		>
+			<LoginForm />
+		</Suspense>
 	);
 }

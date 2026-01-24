@@ -9,16 +9,16 @@ export interface HeaderProps {
 
 export function Header({ userRole = "student", userName }: HeaderProps) {
 	const studentNavItems = [
-		{ href: "/student-dashboard", label: "ダッシュボード" },
-		{ href: "/contents", label: "学習コンテンツ" },
-		{ href: "/progress", label: "進捗確認" },
+		{ href: "/student/dashboard", label: "ダッシュボード" },
+		{ href: "/student/contents", label: "学習コンテンツ" },
+		{ href: "/student/progress", label: "進捗確認" },
 	];
 
 	const instructorNavItems = [
-		{ href: "/instructor-dashboard", label: "ダッシュボード" },
-		{ href: "/students", label: "受講生管理" },
-		{ href: "/contents-manage", label: "コンテンツ管理" },
-		{ href: "/submissions", label: "課題確認" },
+		{ href: "/instructor/dashboard", label: "ダッシュボード" },
+		{ href: "/instructor/students", label: "受講生管理" },
+		{ href: "/instructor/contents", label: "コンテンツ管理" },
+		{ href: "/instructor/submissions", label: "課題確認" },
 	];
 
 	const navItems =
