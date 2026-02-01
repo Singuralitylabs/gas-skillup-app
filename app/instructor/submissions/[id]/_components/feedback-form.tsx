@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { addFeedback } from "@/app/_actions/submissions";
-import { Button, Textarea } from "@/components/ui";
+import { Button, Textarea, useToast } from "@/components/ui";
 
 interface FeedbackFormProps {
 	submissionId: string;
@@ -15,43 +15,41 @@ export function FeedbackForm({
 	existingFeedback,
 }: FeedbackFormProps) {
 	const router = useRouter();
+	const toast = useToast();
 	const [feedback, setFeedback] = useState(existingFeedback || "");
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [error, setError] = useState("");
 
 	const handleSubmitFeedback = async () => {
 		if (!feedback.trim()) {
-			setError("フィードバックを入力してください");
+			toast.warning("入力エラー", "フィードバックを入力してください");
 			return;
 		}
 
-		setError("");
 		setIsSubmitting(true);
 
 		try {
 			const result = await addFeedback(submissionId, feedback);
 
 			if (!result.success) {
-				setError(result.error || "フィードバックの送信に失敗しました");
+				toast.error(
+					"エラー",
+					result.error || "フィードバックの送信に失敗しました",
+				);
 				setIsSubmitting(false);
 				return;
 			}
 
+			toast.success("送信完了", "フィードバックを送信しました");
 			router.push("/instructor/submissions");
 			router.refresh();
 		} catch {
-			setError("フィードバックの送信に失敗しました");
+			toast.error("エラー", "フィードバックの送信に失敗しました");
 			setIsSubmitting(false);
 		}
 	};
 
 	return (
 		<div className="space-y-4">
-			{error && (
-				<div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg p-3 text-sm">
-					{error}
-				</div>
-			)}
 			<Textarea
 				value={feedback}
 				onChange={(e) => setFeedback(e.target.value)}
