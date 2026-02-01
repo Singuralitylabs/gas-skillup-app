@@ -6,11 +6,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
-import type { ContentResponse, SubmissionResponse } from "@/types";
+import type { Content, Submission } from "@/types/database.types";
 
 interface SubmissionCardProps {
-	submission: SubmissionResponse;
-	content: ContentResponse;
+	submission: Submission;
+	content: Content;
 }
 
 /**
@@ -28,7 +28,7 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 		});
 	};
 
-	const hasFeeback = submission.feedback !== null;
+	const hasFeedback = submission.feedback !== null;
 
 	return (
 		<Card>
@@ -44,19 +44,19 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 							</Link>
 						</CardTitle>
 						<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-muted-foreground">
-							<span>提出日時: {formatDate(submission.createdAt)}</span>
+							<span>提出日時: {formatDate(submission.created_at)}</span>
 							<span className="hidden sm:inline">•</span>
 							<span>
 								タイプ:{" "}
-								{submission.submissionType === "code" ? "コード" : "URL"}
+								{submission.submission_type === "code" ? "コード" : "URL"}
 							</span>
 						</div>
 					</div>
 					<Badge
-						variant={hasFeeback ? "success" : "default"}
+						variant={hasFeedback ? "success" : "default"}
 						className="self-start"
 					>
-						{hasFeeback ? "フィードバック済み" : "未レビュー"}
+						{hasFeedback ? "フィードバック済み" : "未レビュー"}
 					</Badge>
 				</div>
 			</CardHeader>
@@ -64,7 +64,7 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 				{/* 提出内容 */}
 				<div className="space-y-2">
 					<h3 className="text-sm font-semibold">提出内容</h3>
-					{submission.submissionType === "code" ? (
+					{submission.submission_type === "code" ? (
 						<pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto">
 							<code className="text-sm font-mono">{submission.content}</code>
 						</pre>
@@ -97,16 +97,16 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 				</div>
 
 				{/* フィードバック */}
-				{hasFeeback && (
+				{hasFeedback && (
 					<div className="space-y-2">
 						<h3 className="text-sm font-semibold">フィードバック</h3>
 						<div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
 							<p className="text-sm whitespace-pre-wrap">
 								{submission.feedback}
 							</p>
-							{submission.feedbackAt && (
+							{submission.feedback_at && (
 								<p className="text-xs text-muted-foreground mt-2">
-									{formatDate(submission.feedbackAt)}
+									{formatDate(submission.feedback_at)}
 								</p>
 							)}
 						</div>

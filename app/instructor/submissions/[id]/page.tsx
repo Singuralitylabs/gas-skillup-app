@@ -1,20 +1,17 @@
-"use client";
-
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { notFound, redirect } from "next/navigation";
+import { getCurrentProfile } from "@/app/_lib/supabase/queries/profiles";
+import { getSubmissionWithDetails } from "@/app/_lib/supabase/queries/submissions";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import {
 	Badge,
-	Button,
 	Card,
 	CardContent,
 	CardHeader,
 	CardTitle,
-	Textarea,
 } from "@/components/ui";
-import { mockContents, mockSubmissions, mockUsers } from "@/lib/mock";
 import { formatDate } from "@/lib/utils/format";
+import { FeedbackForm } from "./_components";
 
 interface SubmissionDetailPageProps {
 	params: Promise<{
@@ -22,48 +19,30 @@ interface SubmissionDetailPageProps {
 	}>;
 }
 
-export default function SubmissionDetailPage({
+export default async function SubmissionDetailPage({
 	params,
 }: SubmissionDetailPageProps) {
-	const { id } = use(params);
-	const router = useRouter();
+	const { id } = await params;
+
+	// 認証・権限チェック
+	const profile = await getCurrentProfile();
+
+	if (!profile) {
+		redirect("/login");
+	}
+
+	if (profile.role !== "instructor") {
+		redirect("/student/dashboard");
+	}
 
 	// 課題提出データを取得
-	const submission = mockSubmissions.find((s) => s.id === id);
+	const submission = await getSubmissionWithDetails(id);
 
 	if (!submission) {
 		notFound();
 	}
 
-	const user = mockUsers.find((u) => u.id === submission.userId);
-	const content = mockContents.find((c) => c.id === submission.contentId);
-
-	// フィードバック入力状態
-	const [feedback, setFeedback] = useState(submission.feedback || "");
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	const handleSubmitFeedback = async () => {
-		if (!feedback.trim()) {
-			alert("フィードバックを入力してください");
-			return;
-		}
-
-		setIsSubmitting(true);
-
-		// TODO: 実際のAPI呼び出しに置き換える
-		await new Promise((resolve) => setTimeout(resolve, 500));
-
-		// モックデータを更新（実際はAPIで更新）
-		const submissionIndex = mockSubmissions.findIndex((s) => s.id === id);
-		if (submissionIndex !== -1) {
-			mockSubmissions[submissionIndex].feedback = feedback;
-			mockSubmissions[submissionIndex].feedbackAt = new Date().toISOString();
-		}
-
-		setIsSubmitting(false);
-		alert("フィードバックを送信しました");
-		router.push("/instructor/submissions");
-	};
+	const { user, contentInfo: content } = submission;
 
 	return (
 		<div className="space-y-6">
@@ -90,8 +69,8 @@ export default function SubmissionDetailPage({
 						<p className="text-sm text-muted-foreground">受講生</p>
 					</CardHeader>
 					<CardContent>
-						<p className="font-medium">{user?.name || "不明なユーザー"}</p>
-						<p className="text-xs text-muted-foreground">{user?.email}</p>
+						<p className="font-medium">{user.name || "不明なユーザー"}</p>
+						<p className="text-xs text-muted-foreground">{user.email}</p>
 					</CardContent>
 				</Card>
 				<Card>
@@ -99,7 +78,7 @@ export default function SubmissionDetailPage({
 						<p className="text-sm text-muted-foreground">課題名</p>
 					</CardHeader>
 					<CardContent>
-						<p className="text-sm">{content?.title || "不明なコンテンツ"}</p>
+						<p className="text-sm">{content.title}</p>
 					</CardContent>
 				</Card>
 				<Card>
@@ -107,7 +86,7 @@ export default function SubmissionDetailPage({
 						<p className="text-sm text-muted-foreground">提出日</p>
 					</CardHeader>
 					<CardContent>
-						<p className="text-sm">{formatDate(submission.createdAt)}</p>
+						<p className="text-sm">{formatDate(submission.created_at)}</p>
 					</CardContent>
 				</Card>
 				<Card>
@@ -128,12 +107,12 @@ export default function SubmissionDetailPage({
 					<CardTitle>提出内容</CardTitle>
 					<div className="flex items-center gap-2">
 						<Badge variant="secondary">
-							{submission.submissionType === "code" ? "コード" : "URL"}
+							{submission.submission_type === "code" ? "コード" : "URL"}
 						</Badge>
 					</div>
 				</CardHeader>
 				<CardContent>
-					{submission.submissionType === "code" ? (
+					{submission.submission_type === "code" ? (
 						<pre className="rounded-lg bg-muted p-4 overflow-x-auto">
 							<code className="text-sm">{submission.content}</code>
 						</pre>
@@ -159,59 +138,35 @@ export default function SubmissionDetailPage({
 					<CardTitle>
 						{submission.feedback ? "フィードバック" : "フィードバックを入力"}
 					</CardTitle>
-					{submission.feedbackAt && (
+					{submission.feedback_at && (
 						<p className="text-sm text-muted-foreground">
-							送信日: {formatDate(submission.feedbackAt)}
+							送信日: {formatDate(submission.feedback_at)}
 						</p>
 					)}
 				</CardHeader>
 				<CardContent>
-					<div className="space-y-4">
-						<Textarea
-							value={feedback}
-							onChange={(e) => setFeedback(e.target.value)}
-							placeholder="課題に対するフィードバックを入力してください..."
-							rows={8}
-							className="w-full"
-							disabled={isSubmitting}
-						/>
-						<div className="flex justify-end gap-2">
-							<Button
-								variant="secondary"
-								onClick={() => router.push("/instructor/submissions")}
-								disabled={isSubmitting}
-							>
-								キャンセル
-							</Button>
-							<Button onClick={handleSubmitFeedback} disabled={isSubmitting}>
-								{isSubmitting
-									? "送信中..."
-									: submission.feedback
-										? "フィードバックを更新"
-										: "フィードバックを送信"}
-							</Button>
-						</div>
-					</div>
+					<FeedbackForm
+						submissionId={submission.id}
+						existingFeedback={submission.feedback}
+					/>
 				</CardContent>
 			</Card>
 
 			{/* Course Content Reference */}
-			{content && (
-				<Card>
-					<CardHeader>
-						<CardTitle>課題内容（参考）</CardTitle>
-					</CardHeader>
-					<CardContent>
-						{content.type === "video" ? (
-							<div className="whitespace-pre-wrap text-sm text-muted-foreground">
-								{content.content}
-							</div>
-						) : (
-							<MarkdownRenderer content={content.content ?? ""} />
-						)}
-					</CardContent>
-				</Card>
-			)}
+			<Card>
+				<CardHeader>
+					<CardTitle>課題内容（参考）</CardTitle>
+				</CardHeader>
+				<CardContent>
+					{content.type === "video" ? (
+						<div className="whitespace-pre-wrap text-sm text-muted-foreground">
+							{content.content}
+						</div>
+					) : (
+						<MarkdownRenderer content={content.content ?? ""} />
+					)}
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
