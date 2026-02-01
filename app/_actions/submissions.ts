@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/_lib/supabase/server";
 import type { SubmissionType } from "@/types/database.types";
+import { createNotification } from "./notifications";
 
 export type ActionResult<T = void> = {
 	success: boolean;
@@ -108,16 +109,23 @@ export async function addFeedback(
 		return { success: false, error: "権限がありません" };
 	}
 
-	// 提出物が存在するか確認
+	// 提出物が存在するか確認（通知用にuser_idとcontent_idも取得）
 	const { data: submission } = await supabase
 		.from("submissions")
-		.select("id")
+		.select("id, user_id, content_id")
 		.eq("id", submissionId)
 		.single();
 
 	if (!submission) {
 		return { success: false, error: "提出物が見つかりません" };
 	}
+
+	// コンテンツ情報を取得（通知メッセージ用）
+	const { data: content } = await supabase
+		.from("contents")
+		.select("title")
+		.eq("id", submission.content_id)
+		.single();
 
 	// フィードバックを更新
 	const { error } = await supabase
@@ -134,8 +142,19 @@ export async function addFeedback(
 		return { success: false, error: "フィードバックの送信に失敗しました" };
 	}
 
+	// 受講生に通知を作成
+	const contentTitle = content?.title ?? "課題";
+	await createNotification(
+		submission.user_id,
+		"feedback",
+		"フィードバックが届きました",
+		`「${contentTitle}」の課題にフィードバックが送信されました。`,
+		submissionId,
+	);
+
 	// 関連するページのキャッシュを更新
 	revalidatePath("/student/submissions");
+	revalidatePath("/student/notifications");
 	revalidatePath("/instructor/submissions");
 	revalidatePath(`/instructor/submissions/${submissionId}`);
 

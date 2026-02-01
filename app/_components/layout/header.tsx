@@ -1,13 +1,19 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui";
 import { MobileMenu } from "./mobile-menu";
 
 export interface HeaderProps {
 	userRole?: "student" | "instructor" | "admin";
 	userName?: string;
+	notificationSlot?: ReactNode;
 }
 
-export function Header({ userRole = "student", userName }: HeaderProps) {
+export function Header({
+	userRole = "student",
+	userName,
+	notificationSlot,
+}: HeaderProps) {
 	const studentNavItems = [
 		{ href: "/student/dashboard", label: "ダッシュボード" },
 		{ href: "/student/contents", label: "学習コンテンツ" },
@@ -52,6 +58,9 @@ export function Header({ userRole = "student", userName }: HeaderProps) {
 
 				{/* User Menu */}
 				<div className="flex items-center gap-2">
+					{/* Notification Bell */}
+					{notificationSlot}
+
 					{userName ? (
 						<>
 							<span className="hidden text-sm text-muted-foreground sm:inline-block">

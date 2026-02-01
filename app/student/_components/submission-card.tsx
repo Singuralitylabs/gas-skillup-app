@@ -66,7 +66,9 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 					<h3 className="text-sm font-semibold">提出内容</h3>
 					{submission.submission_type === "code" ? (
 						<pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto">
-							<code className="text-sm font-mono">{submission.content}</code>
+							<code className="text-sm font-mono text-gray-900 dark:text-gray-100">
+								{submission.content}
+							</code>
 						</pre>
 					) : (
 						<div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
@@ -101,7 +103,7 @@ export function SubmissionCard({ submission, content }: SubmissionCardProps) {
 					<div className="space-y-2">
 						<h3 className="text-sm font-semibold">フィードバック</h3>
 						<div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-							<p className="text-sm whitespace-pre-wrap">
+							<p className="text-sm whitespace-pre-wrap text-blue-900 dark:text-blue-100">
 								{submission.feedback}
 							</p>
 							{submission.feedback_at && (

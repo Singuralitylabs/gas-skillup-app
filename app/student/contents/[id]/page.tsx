@@ -126,7 +126,7 @@ export default function ContentDetailPage() {
 				.select("*")
 				.eq("user_id", authUser.id)
 				.eq("content_id", contentId)
-				.single();
+				.maybeSingle();
 
 			if (!progressError && progressData) {
 				setIsCompleted(progressData.completed);
