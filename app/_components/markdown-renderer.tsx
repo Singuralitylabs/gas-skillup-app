@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSanitize from "rehype-sanitize";
@@ -11,7 +12,13 @@ interface MarkdownRendererProps {
 	className?: string;
 }
 
-export function MarkdownRenderer({
+/**
+ * MarkdownRenderer コンポーネント
+ *
+ * Markdownコンテンツをレンダリングする
+ * React.memoで最適化済み
+ */
+export const MarkdownRenderer = memo(function MarkdownRenderer({
 	content,
 	className = "",
 }: MarkdownRendererProps) {
@@ -25,4 +32,4 @@ export function MarkdownRenderer({
 			</ReactMarkdown>
 		</div>
 	);
-}
+});

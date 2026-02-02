@@ -1,6 +1,9 @@
+export {
+	ProgressDistributionChart,
+	SubmissionTrendChart,
+} from "./charts";
+// チャートコンポーネント（動的インポート済み）
+export type { ProgressDistributionChartProps } from "./charts/progress-distribution-chart";
+export type { SubmissionTrendChartProps } from "./charts/submission-trend-chart";
 export type { KpiCardProps } from "./kpi-card";
 export { KpiCard } from "./kpi-card";
-export type { ProgressDistributionChartProps } from "./progress-distribution-chart";
-export { ProgressDistributionChart } from "./progress-distribution-chart";
-export type { SubmissionTrendChartProps } from "./submission-trend-chart";
-export { SubmissionTrendChart } from "./submission-trend-chart";

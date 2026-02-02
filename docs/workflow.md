@@ -287,10 +287,10 @@ W10 ✓ 本番リリース
 - [x] アニメーション追加（カスタムキーフレーム、トランジション）
 
 **パフォーマンス最適化** (2日)
-- [ ] 画像最適化（next/image活用）
-- [ ] コード分割（dynamic import）
-- [ ] React Query キャッシング最適化
-- [ ] Core Web Vitals改善
+- [x] 画像最適化（next.config.ts設定、remotePatterns、formats）
+- [x] コード分割（チャートコンポーネントのdynamic import）
+- [x] キャッシュユーティリティ作成（lib/utils/cache.ts）
+- [x] Core Web Vitals改善（optimizePackageImports、React.memo）
 
 **セキュリティ強化** (1日)
 - [ ] RLSポリシー全体レビュー
@@ -604,7 +604,7 @@ gas-skillup-app/
 - [ ] Slack/メール通知実装
 - [x] お知らせ機能
 - [x] UI/UX改善
-- [ ] パフォーマンス最適化
+- [x] パフォーマンス最適化
 
 ### Sprint 5（リリース）
 - [ ] E2Eテスト実施
