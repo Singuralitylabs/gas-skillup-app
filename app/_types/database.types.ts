@@ -90,6 +90,53 @@ export type Database = {
 					},
 				];
 			};
+			notifications: {
+				Row: {
+					content: string;
+					created_at: string | null;
+					id: string;
+					is_read: boolean | null;
+					read_at: string | null;
+					related_id: string | null;
+					title: string;
+					type: Database["public"]["Enums"]["notification_type"];
+					updated_at: string | null;
+					user_id: string;
+				};
+				Insert: {
+					content: string;
+					created_at?: string | null;
+					id?: string;
+					is_read?: boolean | null;
+					read_at?: string | null;
+					related_id?: string | null;
+					title: string;
+					type: Database["public"]["Enums"]["notification_type"];
+					updated_at?: string | null;
+					user_id: string;
+				};
+				Update: {
+					content?: string;
+					created_at?: string | null;
+					id?: string;
+					is_read?: boolean | null;
+					read_at?: string | null;
+					related_id?: string | null;
+					title?: string;
+					type?: Database["public"]["Enums"]["notification_type"];
+					updated_at?: string | null;
+					user_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "notifications_user_id_fkey";
+						columns: ["user_id"];
+						isOneToOne: false;
+						referencedRelation: "profiles";
+						referencedColumns: ["id"];
+					},
+				];
+			};
 			phases: {
 				Row: {
 					created_at: string;
@@ -291,6 +338,7 @@ export type Database = {
 		};
 		Enums: {
 			content_type: "video" | "text" | "exercise";
+			notification_type: "feedback" | "announcement" | "approval";
 			submission_type: "code" | "url";
 			user_role: "student" | "instructor";
 		};
@@ -411,7 +459,9 @@ export type Content = Tables<"contents">;
 export type UserProgress = Tables<"user_progress">;
 export type Submission = Tables<"submissions">;
 export type Announcement = Tables<"announcements">;
+export type Notification = Tables<"notifications">;
 
 export type UserRole = Enums<"user_role">;
 export type ContentType = Enums<"content_type">;
 export type SubmissionType = Enums<"submission_type">;
+export type NotificationType = Enums<"notification_type">;

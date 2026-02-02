@@ -1,64 +1,29 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { getAllContents } from "@/app/_lib/supabase/queries/contents";
+import { getCurrentProfile } from "@/app/_lib/supabase/queries/profiles";
+import { getSubmissionsByUserId } from "@/app/_lib/supabase/queries/submissions";
 import { Button, EmptySubmissions } from "@/components/ui";
-import {
-	getCurrentUser,
-	getStoredUserSubmissions,
-	mockContents,
-} from "@/lib/mock";
-import type {
-	ContentResponse,
-	SubmissionResponse,
-	UserResponse,
-} from "@/types";
-import { SubmissionCard } from "../_components";
+import { SubmissionCard } from "../_components/submission-card";
 
-export default function SubmissionsPage() {
-	const router = useRouter();
-	const [user, setUser] = useState<UserResponse | null>(null);
-	const [submissions, setSubmissions] = useState<SubmissionResponse[]>([]);
-	const [contentMap, setContentMap] = useState<Map<string, ContentResponse>>(
-		new Map(),
-	);
+export default async function SubmissionsPage() {
+	// 認証・承認チェック
+	const profile = await getCurrentProfile();
 
-	useEffect(() => {
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			router.push("/login");
-			return;
-		}
-
-		if (!currentUser.approved) {
-			router.push("/pending-approval");
-			return;
-		}
-
-		setUser(currentUser);
-
-		// 提出履歴を取得（新しい順）
-		const userSubmissions = getStoredUserSubmissions(currentUser.id).sort(
-			(a, b) =>
-				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-		);
-		setSubmissions(userSubmissions);
-
-		// コンテンツ情報のマップを作成
-		const map = new Map<string, ContentResponse>();
-		for (const submission of userSubmissions) {
-			const content = mockContents.find((c) => c.id === submission.contentId);
-			if (content) {
-				map.set(content.id, content);
-			}
-		}
-		setContentMap(map);
-	}, [router]);
-
-	if (!user) {
-		return null;
+	if (!profile) {
+		redirect("/login");
 	}
+
+	if (!profile.approved) {
+		redirect("/pending-approval");
+	}
+
+	// 提出履歴を取得（新しい順）
+	const submissions = await getSubmissionsByUserId(profile.id);
+
+	// コンテンツ情報を取得
+	const contents = await getAllContents();
+	const contentMap = new Map(contents.map((c) => [c.id, c]));
 
 	// フィードバック済み/未レビューの数を計算
 	const reviewedCount = submissions.filter((s) => s.feedback !== null).length;
@@ -75,12 +40,8 @@ export default function SubmissionsPage() {
 							提出した課題とフィードバックを確認できます
 						</p>
 					</div>
-					<Button
-						variant="outline"
-						onClick={() => router.push("/student/dashboard")}
-						className="w-full sm:w-auto"
-					>
-						ダッシュボードに戻る
+					<Button variant="outline" asChild className="w-full sm:w-auto">
+						<Link href="/student/dashboard">ダッシュボードに戻る</Link>
 					</Button>
 				</div>
 
@@ -114,13 +75,11 @@ export default function SubmissionsPage() {
 
 				{/* 提出履歴リスト */}
 				{submissions.length === 0 ? (
-					<EmptySubmissions
-						onSubmitClick={() => router.push("/student/contents")}
-					/>
+					<EmptySubmissions />
 				) : (
 					<div className="space-y-4">
 						{submissions.map((submission) => {
-							const content = contentMap.get(submission.contentId);
+							const content = contentMap.get(submission.content_id);
 							if (!content) return null;
 
 							return (

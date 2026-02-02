@@ -108,3 +108,198 @@
 		@apply bg-background text-foreground font-sans;
 	}
 }
+
+/* ===== Custom Animations ===== */
+@theme inline {
+	/* Animation Durations */
+	--animate-duration-fast: 150ms;
+	--animate-duration-normal: 300ms;
+	--animate-duration-slow: 500ms;
+
+	/* Animation Timings */
+	--animate-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+	--animate-ease-out: cubic-bezier(0, 0, 0.2, 1);
+	--animate-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Keyframes */
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-in-down {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scale-in {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes slide-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slide-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+/* Animation Utility Classes */
+@layer utilities {
+	.animate-fade-in {
+		animation: fade-in 300ms ease-out forwards;
+	}
+
+	.animate-fade-in-up {
+		animation: fade-in-up 400ms ease-out forwards;
+	}
+
+	.animate-fade-in-down {
+		animation: fade-in-down 400ms ease-out forwards;
+	}
+
+	.animate-scale-in {
+		animation: scale-in 300ms ease-out forwards;
+	}
+
+	.animate-slide-in-right {
+		animation: slide-in-right 400ms ease-out forwards;
+	}
+
+	.animate-slide-in-left {
+		animation: slide-in-left 400ms ease-out forwards;
+	}
+
+	/* Staggered animation delays */
+	.animate-delay-100 {
+		animation-delay: 100ms;
+	}
+
+	.animate-delay-200 {
+		animation-delay: 200ms;
+	}
+
+	.animate-delay-300 {
+		animation-delay: 300ms;
+	}
+
+	.animate-delay-400 {
+		animation-delay: 400ms;
+	}
+
+	.animate-delay-500 {
+		animation-delay: 500ms;
+	}
+
+	/* Initial state for animations */
+	.animate-initial {
+		opacity: 0;
+	}
+
+	/* Interactive transitions */
+	.transition-colors-fast {
+		transition:
+			color 150ms ease-in-out,
+			background-color 150ms ease-in-out,
+			border-color 150ms ease-in-out;
+	}
+
+	.transition-transform-fast {
+		transition: transform 150ms ease-out;
+	}
+
+	/* Hover scale effect */
+	.hover-lift {
+		transition:
+			transform 200ms ease-out,
+			box-shadow 200ms ease-out;
+	}
+
+	.hover-lift:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	/* Card hover effect */
+	.card-interactive {
+		transition:
+			transform 200ms ease-out,
+			box-shadow 200ms ease-out,
+			border-color 200ms ease-out;
+	}
+
+	.card-interactive:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+		border-color: var(--color-primary);
+	}
+
+	/* Button press effect */
+	.btn-press:active {
+		transform: scale(0.98);
+	}
+
+	/* Shimmer effect for skeleton loading */
+	.shimmer {
+		background: linear-gradient(
+			90deg,
+			var(--color-muted) 0%,
+			var(--color-background) 50%,
+			var(--color-muted) 100%
+		);
+		background-size: 200% 100%;
+		animation: shimmer 1.5s infinite;
+	}
+}

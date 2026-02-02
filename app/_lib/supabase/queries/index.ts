@@ -34,6 +34,14 @@ export {
 	type ProgressDistribution,
 	type SubmissionTrend,
 } from "./dashboard";
+// 通知関連
+export {
+	getLatestNotifications,
+	getNotificationById,
+	getNotificationsByUserId,
+	getUnreadNotificationCount,
+	getUnreadNotifications,
+} from "./notifications";
 export {
 	getAllProfiles,
 	getApprovedStudents,
