@@ -1,6 +1,35 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/app/_lib/supabase/middleware";
 
+/**
+ * セキュリティヘッダーを設定
+ */
+function setSecurityHeaders(response: NextResponse): NextResponse {
+	// XSS攻撃防止
+	response.headers.set("X-Content-Type-Options", "nosniff");
+	response.headers.set("X-XSS-Protection", "1; mode=block");
+
+	// クリックジャッキング防止
+	response.headers.set("X-Frame-Options", "DENY");
+
+	// リファラーポリシー
+	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+	// パーミッションポリシー（不要な機能を無効化）
+	response.headers.set(
+		"Permissions-Policy",
+		"camera=(), microphone=(), geolocation=(), interest-cohort=()",
+	);
+
+	// Strict Transport Security（HTTPS強制）
+	response.headers.set(
+		"Strict-Transport-Security",
+		"max-age=31536000; includeSubDomains",
+	);
+
+	return response;
+}
+
 // 認証不要なパス
 const publicPaths = ["/login", "/auth/callback"];
 
@@ -16,7 +45,7 @@ export async function middleware(request: NextRequest) {
 		pathname.startsWith("/api") ||
 		pathname.includes(".")
 	) {
-		return NextResponse.next();
+		return setSecurityHeaders(NextResponse.next());
 	}
 
 	// セッションを更新し、ユーザー情報を取得
@@ -35,8 +64,8 @@ export async function middleware(request: NextRequest) {
 
 			if (profile) {
 				if (!profile.approved) {
-					return NextResponse.redirect(
-						new URL("/pending-approval", request.url),
+					return setSecurityHeaders(
+						NextResponse.redirect(new URL("/pending-approval", request.url)),
 					);
 				}
 				// 承認済みの場合はロールに応じてリダイレクト
@@ -44,17 +73,19 @@ export async function middleware(request: NextRequest) {
 					profile.role === "instructor"
 						? "/instructor/dashboard"
 						: "/student/dashboard";
-				return NextResponse.redirect(new URL(redirectPath, request.url));
+				return setSecurityHeaders(
+					NextResponse.redirect(new URL(redirectPath, request.url)),
+				);
 			}
 		}
-		return supabaseResponse;
+		return setSecurityHeaders(supabaseResponse);
 	}
 
 	// 未認証の場合はログインページへ
 	if (!user) {
 		const loginUrl = new URL("/login", request.url);
 		loginUrl.searchParams.set("redirectTo", pathname);
-		return NextResponse.redirect(loginUrl);
+		return setSecurityHeaders(NextResponse.redirect(loginUrl));
 	}
 
 	// プロフィール情報を取得
@@ -67,7 +98,9 @@ export async function middleware(request: NextRequest) {
 	// プロフィールが存在しない場合（初回登録時のレースコンディション対策）
 	if (!profile) {
 		// 少し待ってからリトライするか、pending-approvalに誘導
-		return NextResponse.redirect(new URL("/pending-approval", request.url));
+		return setSecurityHeaders(
+			NextResponse.redirect(new URL("/pending-approval", request.url)),
+		);
 	}
 
 	// 承認待ちパスの場合
@@ -78,21 +111,27 @@ export async function middleware(request: NextRequest) {
 				profile.role === "instructor"
 					? "/instructor/dashboard"
 					: "/student/dashboard";
-			return NextResponse.redirect(new URL(redirectPath, request.url));
+			return setSecurityHeaders(
+				NextResponse.redirect(new URL(redirectPath, request.url)),
+			);
 		}
-		return supabaseResponse;
+		return setSecurityHeaders(supabaseResponse);
 	}
 
 	// 未承認ユーザーは承認待ちページへ
 	if (!profile.approved) {
-		return NextResponse.redirect(new URL("/pending-approval", request.url));
+		return setSecurityHeaders(
+			NextResponse.redirect(new URL("/pending-approval", request.url)),
+		);
 	}
 
 	// ロールベースのアクセス制御
 	if (pathname.startsWith("/instructor")) {
 		if (profile.role !== "instructor") {
 			// 学生が講師ページにアクセスしようとした場合
-			return NextResponse.redirect(new URL("/student/dashboard", request.url));
+			return setSecurityHeaders(
+				NextResponse.redirect(new URL("/student/dashboard", request.url)),
+			);
 		}
 	}
 
@@ -109,10 +148,12 @@ export async function middleware(request: NextRequest) {
 			profile.role === "instructor"
 				? "/instructor/dashboard"
 				: "/student/dashboard";
-		return NextResponse.redirect(new URL(redirectPath, request.url));
+		return setSecurityHeaders(
+			NextResponse.redirect(new URL(redirectPath, request.url)),
+		);
 	}
 
-	return supabaseResponse;
+	return setSecurityHeaders(supabaseResponse);
 }
 
 export const config = {
