@@ -14,12 +14,14 @@ export function NewSubmissionForm({ content }: NewSubmissionFormProps) {
 	const router = useRouter();
 	const toast = useToast();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState("");
 
 	const handleSubmit = async (
 		submissionType: SubmissionType,
 		submissionContent: string,
 	) => {
 		setIsSubmitting(true);
+		setSubmitError("");
 
 		try {
 			const result = await createSubmission(
@@ -29,7 +31,9 @@ export function NewSubmissionForm({ content }: NewSubmissionFormProps) {
 			);
 
 			if (!result.success) {
-				toast.error("提出エラー", result.error || "提出に失敗しました");
+				const message = result.error || "提出に失敗しました";
+				setSubmitError(message);
+				toast.error("提出エラー", message);
 				setIsSubmitting(false);
 				return;
 			}
@@ -38,7 +42,9 @@ export function NewSubmissionForm({ content }: NewSubmissionFormProps) {
 			// 提出履歴ページにリダイレクト
 			router.push("/student/submissions");
 		} catch {
-			toast.error("エラー", "提出に失敗しました。もう一度お試しください。");
+			const message = "提出に失敗しました。もう一度お試しください。";
+			setSubmitError(message);
+			toast.error("エラー", message);
 			setIsSubmitting(false);
 		}
 	};
@@ -69,6 +75,7 @@ export function NewSubmissionForm({ content }: NewSubmissionFormProps) {
 					isSubmitting={isSubmitting}
 					onCancel={() => router.back()}
 					contentTitle={content.title}
+					error={submitError}
 				/>
 
 				{/* 注意事項 */}

@@ -224,7 +224,9 @@ export function NotificationBell({
 														{notification.content}
 													</p>
 													<p className="text-xs text-muted-foreground mt-1">
-														{formatTimeAgo(notification.created_at ?? "")}
+														{notification.created_at
+															? formatTimeAgo(notification.created_at)
+															: "日時不明"}
 													</p>
 												</div>
 												{/* Unread indicator */}

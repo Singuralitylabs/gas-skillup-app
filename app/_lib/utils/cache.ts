@@ -4,6 +4,8 @@
  * サーバーサイドでのデータフェッチングキャッシュを管理
  */
 
+// NOTE: unstable_cache は将来の Next.js で変更/削除の可能性あり。
+// 安定APIが提供されたら置き換えを検討すること。
 import { unstable_cache } from "next/cache";
 
 /**
