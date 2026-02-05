@@ -36,7 +36,7 @@ const publicPaths = ["/login", "/auth/callback"];
 // 承認待ちユーザーがアクセスできるパス
 const pendingPaths = ["/pending-approval", "/auth/signout"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	// 静的ファイルやAPIは除外
