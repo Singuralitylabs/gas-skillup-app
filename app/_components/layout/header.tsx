@@ -17,7 +17,7 @@ export function Header({
 	const studentNavItems = [
 		{ href: "/student/dashboard", label: "ダッシュボード" },
 		{ href: "/student/contents", label: "学習コンテンツ" },
-		{ href: "/student/progress", label: "進捗確認" },
+		{ href: "/student/submissions", label: "課題提出" },
 	];
 
 	const instructorNavItems = [
