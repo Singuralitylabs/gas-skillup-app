@@ -15,6 +15,11 @@ package-lock.json
 
 # testing
 /coverage
+/playwright-report/
+/blob-report/
+/test-results/
+/tests/.auth/
+/tests/screenshots/
 
 # next.js
 /.next/
